@@ -6,8 +6,11 @@ use core_graphics::{event, window};
 use std::ffi::{c_void, CStr};
 
 fn main() -> Result<(), ()> {
-    let windows = window::copy_window_info(window::kCGWindowListOptionAll, window::kCGNullWindowID)
-        .ok_or(())?;
+    let windows = window::copy_window_info(
+        window::kCGWindowListOptionAll | window::kCGWindowListOptionOnScreenOnly,
+        window::kCGNullWindowID,
+    )
+    .ok_or(())?;
     dbg!(&windows);
 
     let mut count = 1;
