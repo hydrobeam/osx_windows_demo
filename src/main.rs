@@ -8,8 +8,9 @@ use std::ffi::{c_void, CStr};
 fn main() -> Result<(), ()> {
     let windows = window::copy_window_info(
         window::kCGWindowListOptionAll
-            | window::kCGWindowListOptionExcludeDesktopElements
-            | window::kCGWindowListOptionOnScreenOnly,
+            // | window::kCGWindowListOptionExcludeDesktopElements
+            // | window::kCGWindowListOptionOnScreenOnly,
+            ,
         // window::kCGWindowListOptionAll | window::kCGWindowListOptionOnScreenOnly,
         window::kCGNullWindowID,
     )
