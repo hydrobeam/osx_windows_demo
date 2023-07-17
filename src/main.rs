@@ -10,14 +10,18 @@ fn main() -> Result<(), ()> {
         window::kCGNullWindowID,
     )
     .ok_or(())?;
+    dbg!(&windows);
 
+    let mut count =1;
     // use core_foundation::
     for item in windows.iter() {
-        dbg!(*item);
-        let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
-        let m = unsafe { a.get(window::kCGWindowOwnerName) };
+        // dbg!(*item);
+        // let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
+        // let m = unsafe { a.get(window::kCGWindowOwnerName) };
 
-        dbg!(unsafe { dbg!(*m) });
+        // dbg!(unsafe { dbg!(*m) });
+        dbg!(count);
+        count +=1;
     }
 
     Ok(())
