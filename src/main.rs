@@ -15,8 +15,8 @@ fn main() -> Result<(), ()> {
     let mut count = 1;
     // use core_foundation::
     for item in windows.iter() {
-        // let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFString>>(item) };
-        // dbg!(unsafe { a.find(window::kCGWindowOwnerName) });
+        let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
+        dbg!(unsafe { a.find(window::kCGWindowOwnerName) });
         // dbg!(*item);
         // let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         // let m = unsafe { a.get(window::kCGWindowOwnerName) };
