@@ -1,6 +1,6 @@
-use core_foundation::base::CFTypeRef;
 use core_foundation::dictionary::CFDictionary;
 use core_foundation::string::CFString;
+use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
 
 fn main() -> Result<(), ()> {
@@ -16,9 +16,9 @@ fn main() -> Result<(), ()> {
         dbg!(&item);
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         dbg!(&a);
-        let m = unsafe { a.get(window::kCGWindowOwnerName) };
+        let m = unsafe { a.get(window::kCGWindowOwnerName).cast::<CFStringRef>() };
 
-        dbg!(unsafe { *m });
+        dbg!(m);
     }
 
     Ok(())
