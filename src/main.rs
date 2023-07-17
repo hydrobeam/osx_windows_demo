@@ -1,4 +1,5 @@
-use core_foundation::dictionary::CFDictionary;
+use core_foundation::base::ToVoid;
+use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, CFDictionaryRef};
 use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
 use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
@@ -15,9 +16,16 @@ fn main() -> Result<(), ()> {
     let mut count = 1;
     // use core_foundation::
     for item in windows.iter() {
-        let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
+        let a = unsafe { std::mem::transmute::<_, CFDictionaryRef>(item) };
         // let meow = **a.get(window::kCGWindowOwnerName);
-        dbg!(unsafe { (*a.get(window::kCGWindowOwnerName)).as_ref() });
+        let mut value: *const c_void = std::ptr::null();
+        if unsafe {
+            CFDictionaryGetValueIfPresent(a, window::kCGWindowOwnerName.to_void(), &mut value)
+        } == 1
+        {
+            dbg!(value as CFStringRef);
+        };
+        // dbg!(unsafe { a.offset(window::kCGWindowOwnerName) });
         // dbg!(*item);
         // let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         // let m = unsafe { a.get(window::kCGWindowOwnerName) };
