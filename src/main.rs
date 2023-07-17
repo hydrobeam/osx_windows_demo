@@ -9,13 +9,10 @@ fn main() -> Result<(), ()> {
         window::kCGNullWindowID,
     )
     .ok_or(())?;
-    dbg!(&windows);
 
     // use core_foundation::
     for item in &windows {
-        dbg!(&item);
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
-        dbg!(&a);
         let m = unsafe { a.get(window::kCGWindowOwnerName).cast::<CFStringRef>() };
 
         dbg!(unsafe { CFStringGetCStringPtr(*m, kCFStringEncodingUTF8) });
