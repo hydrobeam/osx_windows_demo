@@ -16,7 +16,8 @@ fn main() -> Result<(), ()> {
     // use core_foundation::
     for item in windows.iter() {
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
-        dbg!(unsafe { *a.get(window::kCGWindowOwnerName) });
+        // let meow = **a.get(window::kCGWindowOwnerName);
+        dbg!(unsafe { (*a.get(window::kCGWindowOwnerName)).as_ref() });
         // dbg!(*item);
         // let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         // let m = unsafe { a.get(window::kCGWindowOwnerName) };
