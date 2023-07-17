@@ -3,7 +3,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, C
 use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
 use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
-use std::ffi::c_void;
+use std::ffi::{c_void, CStr};
 
 fn main() -> Result<(), ()> {
     let windows = window::copy_window_info(
@@ -23,7 +23,17 @@ fn main() -> Result<(), ()> {
             CFDictionaryGetValueIfPresent(a, window::kCGWindowOwnerName.to_void(), &mut value)
         } == 1
         {
-            dbg!(value as CFStringRef);
+            let strang = unsafe {
+                CFStringGetCStringPtr(
+                    value as CFStringRef,
+                    core_foundation::string::kCFStringEncodingUTF8,
+                )
+            };
+
+            if !strang.is_null() {
+                dbg!(unsafe { CStr::from_ptr(strang) });
+            }
+            // dbg!(unsafe { *(value as CFStringRef) });
         };
         // dbg!(unsafe { a.offset(window::kCGWindowOwnerName) });
         // dbg!(*item);
