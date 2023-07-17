@@ -10,18 +10,13 @@ fn main() -> Result<(), ()> {
     )
     .ok_or(())?;
 
-    dbg!(&windows);
-    let n = window::create_window_list(
-        window::kCGWindowListOptionOnScreenOnly,
-        window::kCGNullWindowID,
-    )
-    .ok_or(())?;
-    dbg!(&n);
     // use core_foundation::
     for item in &windows {
+        dbg!(&item);
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
+        dbg!(&a);
         let m = unsafe { a.get(window::kCGWindowOwnerName) }.cast::<&str>();
-        dbg!(m);
+        // dbg!(m);
     }
 
     Ok(())
