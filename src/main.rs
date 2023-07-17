@@ -1,5 +1,5 @@
 use core_foundation::dictionary::CFDictionary;
-use core_foundation::string::CFString;
+use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
 use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
 
@@ -18,7 +18,8 @@ fn main() -> Result<(), ()> {
         dbg!(&a);
         let m = unsafe { a.get(window::kCGWindowOwnerName).cast::<CFStringRef>() };
 
-        dbg!(m);
+        dbg!(unsafe { CFStringGetCStringPtr(*m, kCFStringEncodingUTF8) });
+
     }
 
     Ok(())
