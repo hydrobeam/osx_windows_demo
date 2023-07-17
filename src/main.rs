@@ -7,7 +7,7 @@ use std::ffi::{c_void, CStr};
 
 fn main() -> Result<(), ()> {
     let windows = window::copy_window_info(
-        window::kCGWindowListOptionOnScreenOnly,
+        window::kCGWindowListOptionAll,
         window::kCGNullWindowID,
     )
     .ok_or(())?;
