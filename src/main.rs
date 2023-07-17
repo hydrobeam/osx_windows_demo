@@ -17,7 +17,7 @@ fn main() -> Result<(), ()> {
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         dbg!(&a);
         let m = unsafe { a.get(window::kCGWindowOwnerName) }.cast::<&str>();
-        dbg!(unsafe { m.as_ref().unwrap() });
+        dbg!(unsafe { *m });
     }
 
     Ok(())
