@@ -3,7 +3,8 @@ use core_foundation::dictionary::CFDictionary;
 use core_foundation::string::CFString;
 use core_graphics::{event, window};
 
-fn main() {
+
+fn main() -> Result<(), ()> {
     let windows = window::copy_window_info(
         window::kCGWindowListOptionOnScreenOnly,
         window::kCGNullWindowID,
@@ -16,4 +17,6 @@ fn main() {
         let m = unsafe { a.get(window::kCGWindowOwnerName) }.cast::<&str>();
         dbg!(m);
     }
+
+    Ok(())
 }
