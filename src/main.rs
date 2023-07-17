@@ -11,7 +11,7 @@ fn main() -> Result<(), ()> {
     .ok_or(())?;
 
     // use core_foundation::
-    for item in &windows {
+    for item in windows.iter() {
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         let m = unsafe { a.get(window::kCGWindowOwnerName) };
 
