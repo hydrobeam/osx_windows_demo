@@ -9,6 +9,7 @@ fn main() -> Result<(), ()> {
         window::kCGNullWindowID,
     )
     .ok_or(())?;
+    dbg!(&windows);
 
     // use core_foundation::
     for item in &windows {
@@ -16,7 +17,7 @@ fn main() -> Result<(), ()> {
         let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
         dbg!(&a);
         let m = unsafe { a.get(window::kCGWindowOwnerName) }.cast::<&str>();
-        // dbg!(m);
+        dbg!(unsafe { m.as_ref().unwrap() });
     }
 
     Ok(())
