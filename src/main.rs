@@ -227,12 +227,12 @@ fn main() -> Result<(), ()> {
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
-                                  type:0_i64
+                                  type:1_i64
                                   sampleHandlerQueue:null_p
                                   error:&&*err
                         ]
                     };
-                    dbg!("past");
+                    dbg!(did_setup);
                     // let meow = eater.into();
                     let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
                         if !error.is_null() {
