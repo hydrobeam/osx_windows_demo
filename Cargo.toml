@@ -6,5 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+block2 = "0.2.0"
 core-foundation = "0.9.3"
 core-graphics = "0.23.1"
+icrate = { version = "0.0.3", features = ["Foundation", "Foundation_NSArray", "Foundation_NSString"] }
+objc2 = "0.4.0"
