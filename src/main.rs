@@ -43,53 +43,37 @@ use objc2::{extern_methods, RefEncode};
 extern "C" {}
 
 fn main() -> Result<(), ()> {
-    // SCShareableContent.
-    // core_graphics::display::CGWindowListCopyWindowInfo(option, relativeToWindow)
-    // let a: *mut Object = ;
-    // let available_content: *mut Object = unsafe { msg_send![SCShareableContent, new] };
-    // available_content;
-    // SCShareableContent:
-    let SCWindow = class!(SCWindow);
-    // let CGWindowID = class!(CGWindowID);
     let block = ConcreteBlock::new(
-        |shareableContent: *const SCShareableContent, error: *const NSError| {
-            // if error.is_
+        |shareable_content: *const SCShareableContent, error: *const NSError| {
             if !error.is_null() {
                 panic!("unable to fetch windows, make sure permissions are granted")
             }
 
-            let windows: *const NSArray = unsafe { msg_send![shareableContent, windows] };
-            unsafe {
-                for (count, window) in (*windows).iter().enumerate() {
-                    dbg!(count);
-                    let ret: *const NSString = msg_send![window, title];
-                    if ret.is_null() {
-                        // dbg!("nuh uh");
-                        continue
-                    }
-                    // dbg!(ret);
-                    let utf8title = (*ret).UTF8String();
-                    let title = CStr::from_ptr(utf8title).to_str().unwrap();
-                    dbg!(title);
+            let windows: &NSArray = unsafe { msg_send![shareable_content, windows] };
+            for window in windows.iter() {
+                let ns_title: *const NSString = unsafe { msg_send![window, title] };
+                // not every window has a title
+                if ns_title.is_null() {
+                    continue;
                 }
+                let utf8title = unsafe { (*ns_title).UTF8String() };
+                // SAFETY: we are guaranteed a UTF8string
+                let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
+                dbg!(title);
             }
-            ();
         },
     );
-    // let block= block.clone_into()
-    // let block = &block.copy();
 
     // block
     let sc_shareable = class!(SCShareableContent);
-    dbg!("before");
     unsafe {
-        let a: () = msg_send![
+        let _: () = msg_send![
             sc_shareable,
             getShareableContentWithCompletionHandler:&block
         ];
     };
-    dbg!("after");
-    std::thread::sleep(std::time::Duration::from_secs(3));
+    // give the callback time to execute
+    std::thread::sleep(std::time::Duration::from_secs(1));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
