@@ -85,6 +85,7 @@ fn main() -> Result<(), ()> {
         ];
     };
     dbg!("after");
+    std::thread::sleep(std::time::Duration::from_secs(3));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
