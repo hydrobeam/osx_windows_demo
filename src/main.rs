@@ -228,6 +228,7 @@ fn main() -> Result<(), ()> {
                                   error:null_2
                         ]
                     };
+                    dbg!("past");
                     // let meow = eater.into();
                     let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
                         if !error.is_null() {
