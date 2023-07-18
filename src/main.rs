@@ -61,8 +61,9 @@ fn main() -> Result<(), ()> {
             let windows: *const NSArray = unsafe { msg_send![shareableContent, windows] };
             unsafe {
                 for window in (*windows).iter() {
-                    let ret: *const NSString = msg_send![window, title];
-                    let utf8title = (*ret).UTF8String();
+                    let ret: &NSString = msg_send![window, title];
+                    dbg!(ret);
+                    let utf8title = ret.UTF8String();
                     let title = CStr::from_ptr(utf8title).to_str().unwrap();
                 }
             }
