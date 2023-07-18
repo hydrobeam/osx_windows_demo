@@ -76,6 +76,7 @@ fn main() -> Result<(), ()> {
 
     // block
     let sc_shareable = class!(SCShareableContent);
+    dbg!("??");
     unsafe {
         let a: () = msg_send![
             sc_shareable,
