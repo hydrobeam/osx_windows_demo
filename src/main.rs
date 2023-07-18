@@ -79,7 +79,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait StreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
-        fn stream(
+        fn stream_SWAG(
             the_stream: *const Object,
             sample_buffer: *const Object,
             output_type: NSInteger,
@@ -189,7 +189,6 @@ fn main() -> Result<(), ()> {
 
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
-
                     let delegate: Id<SCDelegate> =
                         unsafe { msg_send_id![SCDelegate::alloc(), init] };
 
