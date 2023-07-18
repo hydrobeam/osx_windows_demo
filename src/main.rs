@@ -213,8 +213,14 @@ fn main() -> Result<(), ()> {
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
 
+                    let d_queue = class!(DispatchQueue);
+                    let dq_init: Id<Object> =
+                        unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let did_setup: bool = unsafe {
-                        msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1 ]
+                        msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1
+                                  samplerHandlerQueue:&*dq_init
+
+                        ]
                     };
                     // let meow = eater.into();
                     let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
