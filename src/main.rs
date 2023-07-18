@@ -229,7 +229,7 @@ fn main() -> Result<(), ()> {
                                   addStreamOutput:&*stream_output_consumer
                                   type:0_i64
                                   sampleHandlerQueue:null_p
-                                  error:&*err
+                                  error:&&*err
                         ]
                     };
                     dbg!("past");
