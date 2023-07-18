@@ -187,6 +187,9 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
+                    let stream_output_consumer: Id<StreamEat> =
+                        unsafe { msg_send_id![StreamEat::alloc(), init] };
+
                     let delegate: Id<SCDelegate> =
                         unsafe { msg_send_id![SCDelegate::alloc(), init] };
 
@@ -206,8 +209,6 @@ fn main() -> Result<(), ()> {
                     // msg_send![stream, ]
 
                     // StreamOutput::stream(the_stream, sample_buffer, output_type)
-                    let stream_output_consumer: Id<StreamEat> =
-                        unsafe { msg_send_id![StreamEat::alloc(), init] };
 
                     // let stream_output_consumer =
                     //     unsafe { std::mem::transmute::<_, Id<NSObject>>(stream_output_consumer) };
