@@ -226,7 +226,7 @@ fn main() -> Result<(), ()> {
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
-                                  type:2_i64
+                                  type:17_i64
                                   sampleHandlerQueue:null_p
                                   error:&&*err
                         ]
