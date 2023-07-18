@@ -216,8 +216,6 @@ fn main() -> Result<(), ()> {
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-                    let d_queue = class!(StreamOutputTypeScreen);
-
                     // let dq_init: Id<Object> =
                     //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let null_p: *const Object = std::ptr::null();
