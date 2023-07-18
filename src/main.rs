@@ -222,8 +222,7 @@ fn main() -> Result<(), ()> {
                     let null_p: *const Object = std::ptr::null();
                     let did_setup: bool = unsafe {
                         msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1
-                                  samplerHandlerQueue:null_p
-                                  error:null_p
+                                  sampleHandlerQueue:null_p
                         ]
                     };
                     // let meow = eater.into();
