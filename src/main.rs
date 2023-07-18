@@ -54,19 +54,16 @@ fn main() -> Result<(), ()> {
     let block = ConcreteBlock::new(
         |shareableContent: *const SCShareableContent, error: *const NSError| {
             // if error.is_
-            println!("SAAAAAAAAAAAAAAA");
-            dbg!(shareableContent);
-            dbg!(error);
-            let windows: *const NSArray = unsafe { msg_send![shareableContent, applications] };
-            dbg!(windows);
+            if !error.is_null() {
+                panic!("unable to fetch windows, make sure permissions are granted")
+            }
+
+            let windows: *const NSArray = unsafe { msg_send![shareableContent, windows] };
             unsafe {
                 for window in (*windows).iter() {
-                    dbg!(window);
                     let ret: *const NSString = msg_send![window, title];
                     let utf8title = (*ret).UTF8String();
                     let title = CStr::from_ptr(utf8title).to_str().unwrap();
-                    eprintln!("{title}");
-                    // std::str::from_utf8(utf8title);
                 }
             }
             ();
