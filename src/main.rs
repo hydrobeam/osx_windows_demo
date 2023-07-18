@@ -53,9 +53,12 @@ fn main() -> Result<(), ()> {
     // let CGWindowID = class!(CGWindowID);
     let block = ConcreteBlock::new(
         |shareableContent: *const SCShareableContent, error: *const NSError| {
-            let windows: *const NSArray = unsafe { msg_send![shareableContent, windows] };
+            // if error.is_
+            let windows: &NSArray = unsafe { msg_send![shareableContent, windows] };
+            dbg!(windows);
             unsafe {
-                for window in (*windows).iter() {
+                for window in windows {
+                    dbg!(window);
                     let ret: &NSString = msg_send![window, title];
                     let utf8title = ret.UTF8String();
                     let title = CStr::from_ptr(utf8title);
