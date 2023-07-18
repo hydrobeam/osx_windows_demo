@@ -62,13 +62,13 @@ fn main() -> Result<(), ()> {
             unsafe {
                 for (count, window) in (*windows).iter().enumerate() {
                     dbg!(count);
-                    let ret: &NSString = msg_send![window, title];
-                    if ret.is_empty() {
+                    let ret: *const NSString = msg_send![window, title];
+                    if ret.is_null() {
                         dbg!("nuh uh");
                         continue
                     }
                     dbg!(ret);
-                    let utf8title = ret.UTF8String();
+                    let utf8title = (*ret).UTF8String();
                     let title = CStr::from_ptr(utf8title).to_str().unwrap();
                 }
             }
