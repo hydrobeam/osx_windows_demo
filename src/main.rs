@@ -177,8 +177,7 @@ fn main() -> Result<(), ()> {
                     let stream: Id<NSObject> = unsafe {
                         msg_send_id![
                             msg_send_id![sc_stream, alloc], initWithFilter:&*filter
-                            streamConfig:&*stream_config
-                            delegate:1
+                            configuration:&*stream_config
                         ]
                     };
 
