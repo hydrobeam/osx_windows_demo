@@ -64,12 +64,13 @@ fn main() -> Result<(), ()> {
                     dbg!(count);
                     let ret: *const NSString = msg_send![window, title];
                     if ret.is_null() {
-                        dbg!("nuh uh");
+                        // dbg!("nuh uh");
                         continue
                     }
-                    dbg!(ret);
+                    // dbg!(ret);
                     let utf8title = (*ret).UTF8String();
                     let title = CStr::from_ptr(utf8title).to_str().unwrap();
+                    dbg!(title);
                 }
             }
             ();
