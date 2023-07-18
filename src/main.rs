@@ -219,12 +219,13 @@ fn main() -> Result<(), ()> {
                     // let dq_init: Id<Object> =
                     //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let null_p: *const Object = std::ptr::null();
+                    let null_2: *const *const Object = std::ptr::null();
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
                                   type:0_i64
                                   sampleHandlerQueue:null_p
-                                  error:null_p
+                                  error:null_2
                         ]
                     };
                     // let meow = eater.into();
