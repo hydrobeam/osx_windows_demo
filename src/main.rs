@@ -4,6 +4,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, C
 use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
 use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
+use icrate::ns_string;
 use objc2::rc::{Allocated, Id};
 use std::ffi::{c_void, CStr};
 
@@ -13,7 +14,7 @@ use objc2::{
     ClassType,
 };
 
-use icrate::Foundation::{NSArray, NSObject, NSObjectProtocol, NSString};
+use icrate::Foundation::{NSArray, NSObject, NSObjectProtocol, NSString, NSErrorDomain};
 
 extern_class!(
     #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
@@ -220,12 +221,15 @@ fn main() -> Result<(), ()> {
                     //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let null_p: *const Object = std::ptr::null();
                     let null_2: *const *const Object = std::ptr::null();
+// [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
+                    // NSErrorDomain::NAME;
+                    let err = NSError::new(0, ns_string!("this domain"));
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
                                   type:0_i64
                                   sampleHandlerQueue:null_p
-                                  error:null_2
+                                  error:&*err
                         ]
                     };
                     dbg!("past");
