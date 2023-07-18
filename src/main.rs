@@ -7,6 +7,7 @@ use core_graphics::{event, window};
 use objc2::rc::{Allocated, Id};
 use std::ffi::{c_void, CStr};
 
+
 use objc2::{
     class, extern_class, msg_send, mutability,
     runtime::{Class, Object},
@@ -157,7 +158,7 @@ unsafe impl RefEncode for dyn StreamOutput {
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
 
-#[link(name = "Dispatch", kind = "framework")]
+#[link(name = "dispatch", kind = "framework")]
 extern "C" {}
 
 fn main() -> Result<(), ()> {
