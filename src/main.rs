@@ -220,14 +220,13 @@ fn main() -> Result<(), ()> {
                     // let dq_init: Id<Object> =
                     //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let null_p: *const Object = std::ptr::null();
-                    let null_2: *const *const Object = std::ptr::null();
                     // [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
                     // NSErrorDomain::NAME;
                     let err = NSError::new(0, ns_string!("this domain"));
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
-                                  type:1_i64
+                                  type:2_i64
                                   sampleHandlerQueue:null_p
                                   error:&&*err
                         ]
