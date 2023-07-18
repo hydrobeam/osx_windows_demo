@@ -79,7 +79,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait StreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
-        fn stream_SWAG(
+        fn stream(
             the_stream: *const Object,
             sample_buffer: *const Object,
             output_type: NSInteger,
@@ -104,7 +104,7 @@ declare_class!(
     unsafe impl NSObjectProtocol for StreamEat {}
 
     unsafe impl StreamOutput for StreamEat {
-        #[method(stream)]
+        #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
             the_stream: *const Object,
             sample_buffer: *const Object,
@@ -135,7 +135,7 @@ declare_class!(
     unsafe impl NSObjectProtocol for SCDelegate {}
 
     unsafe impl SCStreamDelegate for SCDelegate {
-        #[method(stream)]
+        #[method(stream:didStopWithError:)]
         unsafe fn stream(stream: *const Object, did_stop_with_error: *const NSError) {
             dbg!("hi");
         }
@@ -187,8 +187,6 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
-                    let stream_output_consumer: Id<StreamEat> =
-                        unsafe { msg_send_id![StreamEat::alloc(), init] };
                     let delegate: Id<SCDelegate> =
                         unsafe { msg_send_id![SCDelegate::alloc(), init] };
 
@@ -211,6 +209,9 @@ fn main() -> Result<(), ()> {
 
                     // let stream_output_consumer =
                     //     unsafe { std::mem::transmute::<_, Id<NSObject>>(stream_output_consumer) };
+
+                    let stream_output_consumer: Id<StreamEat> =
+                        unsafe { msg_send_id![StreamEat::alloc(), init] };
 
                     let did_setup: bool = unsafe {
                         msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1 ]
