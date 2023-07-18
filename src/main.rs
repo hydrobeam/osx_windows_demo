@@ -157,6 +157,9 @@ unsafe impl RefEncode for dyn StreamOutput {
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
 
+#[link(name = "Dispatch", kind = "framework")]
+extern "C" {}
+
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
     let sc_stream_configuration = class!(SCStreamConfiguration);
