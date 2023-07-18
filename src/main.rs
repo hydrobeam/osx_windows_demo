@@ -64,7 +64,7 @@ fn main() -> Result<(), ()> {
                     let ret: *const NSString = msg_send![window, title];
                     let utf8title = (*ret).UTF8String();
                     let title = CStr::from_ptr(utf8title).to_str().unwrap();
-                    println!("{title}");
+                    eprintln!("{title}");
                     // std::str::from_utf8(utf8title);
                 }
             }
