@@ -7,7 +7,6 @@ use core_graphics::{event, window};
 use objc2::rc::{Allocated, Id};
 use std::ffi::{c_void, CStr};
 
-
 use objc2::{
     class, extern_class, msg_send, mutability,
     runtime::{Class, Object},
@@ -158,8 +157,8 @@ unsafe impl RefEncode for dyn StreamOutput {
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
 
-#[link(name = "dispatch", kind = "framework")]
-extern "C" {}
+// #[link(name = "dispatch", kind = "framework")]
+// extern "C" {}
 
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
@@ -217,13 +216,13 @@ fn main() -> Result<(), ()> {
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-                    let d_queue = class!(DispatchQueue);
-                    let dq_init: Id<Object> =
-                        unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
+                    // let d_queue = class!(DispatchQueue);
+                    // let dq_init: Id<Object> =
+                    //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
+                    let null_p: *const Object = std::ptr::null();
                     let did_setup: bool = unsafe {
                         msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1
-                                  samplerHandlerQueue:&*dq_init
-
+                                  samplerHandlerQueue:null_p
                         ]
                     };
                     // let meow = eater.into();
