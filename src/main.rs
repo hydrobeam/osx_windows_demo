@@ -48,7 +48,6 @@ fn main() -> Result<(), ()> {
     // let a: *mut Object = ;
     // let available_content: *mut Object = unsafe { msg_send![SCShareableContent, new] };
     // available_content;
-    // let SCShareableContent = class!(SCShareableContent);
     // SCShareableContent:
     let SCWindow = class!(SCWindow);
     // let CGWindowID = class!(CGWindowID);
@@ -62,7 +61,6 @@ fn main() -> Result<(), ()> {
                     let title = CStr::from_ptr(utf8title);
                     dbg!(title);
                     // std::str::from_utf8(utf8title);
-
                 }
             }
             ();
@@ -72,14 +70,13 @@ fn main() -> Result<(), ()> {
     // let block = &block.copy();
 
     // block
-    // unsafe {
-    //     msg_send![
-    //         qq,
-    //         getShareableContentExcludingDesktopWindows: false
-    //         onScreenWindowsOnly:false
-    //         completionHandler:block
-    //     ]
-    // };
+    let sc_shareable = class!(SCShareableContent);
+    unsafe {
+        let a: () = msg_send![
+            sc_shareable,
+            getShareableContentWithCompletionHandler:&block
+        ];
+    };
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
