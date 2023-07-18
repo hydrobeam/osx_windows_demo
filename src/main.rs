@@ -85,19 +85,7 @@ extern_protocol!(
             output_type: NSInteger,
         ) -> ();
     }
-
-    // SAFETY:
-    // - The name is correct
-    // - The protocol does inherit `NSObject`
-    // - The methods are correctly specified
-    unsafe impl ProtocolType for dyn StreamOutput {
-        //                       ^^^ - Remember to add this `dyn`.
-
-        // We could have named the trait something else on the Rust-side,
-        // and then used this to keep it correct from Objective-C.
-        //
-        // const NAME: &'static str = "NSItemProviderWriting";
-    }
+    unsafe impl ProtocolType for dyn StreamOutput {}
 );
 
 use objc2::declare::IvarEncode;
@@ -127,6 +115,32 @@ declare_class!(
     }
 );
 
+extern_protocol!(
+    /// This comment will appear on the trait as expected.
+    pub unsafe trait SCStreamDelegate: NSObjectProtocol {
+        #[method(stream:didStopWithError:)]
+        fn stream(stream: *const Object, did_stop_with_error: *const NSError) -> ();
+    }
+    unsafe impl ProtocolType for dyn SCStreamDelegate {}
+);
+
+declare_class!(
+    struct SCDelegate {}
+
+    unsafe impl ClassType for SCDelegate {
+        type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
+        const NAME: &'static str = "SCDelegate";
+    }
+    unsafe impl NSObjectProtocol for SCDelegate {}
+
+    unsafe impl SCStreamDelegate for SCDelegate {
+        #[method(stream)]
+        unsafe fn stream(stream: *const Object, did_stop_with_error: *const NSError) {
+            dbg!("hi");
+        }
+    }
+);
 unsafe impl Encode for StreamEat {
     const ENCODING: objc2::Encoding = objc2::Encoding::Object;
 }
@@ -173,12 +187,14 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
+                    let delegate: Id<SCDelegate> =
+                        unsafe { msg_send_id![SCDelegate::alloc(), init] };
 
                     let stream: Id<NSObject> = unsafe {
                         msg_send_id![
                             msg_send_id![sc_stream, alloc], initWithFilter:&*filter
                             configuration:&*stream_config
-                            delegate:1
+                            delegate:&*delegate
                         ]
                     };
 
