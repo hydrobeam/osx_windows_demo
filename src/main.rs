@@ -14,7 +14,7 @@ use objc2::{
     ClassType,
 };
 
-use icrate::Foundation::{NSArray, NSObject, NSObjectProtocol, NSString, NSErrorDomain};
+use icrate::Foundation::{NSArray, NSErrorDomain, NSObject, NSObjectProtocol, NSString};
 
 extern_class!(
     #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
@@ -221,7 +221,7 @@ fn main() -> Result<(), ()> {
                     //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let null_p: *const Object = std::ptr::null();
                     let null_2: *const *const Object = std::ptr::null();
-// [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
+                    // [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
                     // NSErrorDomain::NAME;
                     let err = NSError::new(0, ns_string!("this domain"));
                     let did_setup: bool = unsafe {
@@ -258,7 +258,7 @@ fn main() -> Result<(), ()> {
         ];
     };
     // give the callback time to execute
-    std::thread::sleep(std::time::Duration::from_secs(1));
+    std::thread::sleep(std::time::Duration::from_secs(2));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
@@ -266,7 +266,7 @@ fn main() -> Result<(), ()> {
 
     // let m = unsafe { msg_send![available_content, excludingDesktopWindows, false,] };
     // let windows = window::copy_window_info(
-        // window::kCGWindowListOptionAll
+    // window::kCGWindowListOptionAll
     //         | window::kCGWindowListOptionExcludeDesktopElements
     //         | window::kCGWindowListOptionOnScreenOnly,
     //     // window::kCGWindowListOptionAll | window::kCGWindowListOptionOnScreenOnly,
