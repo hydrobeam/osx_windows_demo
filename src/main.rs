@@ -166,19 +166,19 @@ fn main() -> Result<(), ()> {
                 let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
                 if title.contains("osx") {
                     // SCWindow
-                    let filter: *const NSObject = unsafe {
-                        msg_send![sc_content_filter, initWithDesktopIndependentWindow:window]
-                    };
+                    let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
+                    let filter: Id<NSObject> =
+                        unsafe { msg_send_id![f_obj, initWithDesktopIndependentWindow:window] };
 
-                    let stream_config: *const NSObject =
-                        unsafe { msg_send![sc_stream_configuration, alloc] };
+                    let stream_config: Id<NSObject> =
+                        unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
                     dbg!(title);
-                    sc_content_filter;
-                    let stream: *const NSObject = unsafe {
-                        msg_send![
-                            sc_stream, initWithFilter:filter
-                            streamConfig:stream_config
+
+                    let stream: Id<NSObject> = unsafe {
+                        msg_send_id![
+                            msg_send_id![sc_stream, alloc], initWithFilter:&*filter
+                            streamConfig:&*stream_config
                         ]
                     };
 
@@ -197,7 +197,7 @@ fn main() -> Result<(), ()> {
                     //     unsafe { std::mem::transmute::<_, Id<NSObject>>(stream_output_consumer) };
 
                     let did_setup: bool = unsafe {
-                        msg_send![stream, addStreamOutput:&*stream_output_consumer type:1 ]
+                        msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1 ]
                     };
                     // let meow = eater.into();
                     let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
@@ -208,7 +208,7 @@ fn main() -> Result<(), ()> {
                         }
                     });
                     let _: () = unsafe {
-                        msg_send![stream, startCaptureWithCompletionHandler:&basic_completion_handler]
+                        msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
                 }
             }
