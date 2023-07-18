@@ -178,6 +178,7 @@ fn main() -> Result<(), ()> {
                         msg_send_id![
                             msg_send_id![sc_stream, alloc], initWithFilter:&*filter
                             configuration:&*stream_config
+                            delegate:1
                         ]
                     };
 
