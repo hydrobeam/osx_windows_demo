@@ -56,13 +56,13 @@ fn main() -> Result<(), ()> {
             // if error.is_
             dbg!(shareableContent);
             dbg!(error);
-            let windows: &NSArray = unsafe { msg_send![shareableContent, applications] };
+            let windows: *const NSArray = unsafe { msg_send![shareableContent, applications] };
             dbg!(windows);
             unsafe {
-                for window in windows {
+                for window in (*windows).iter() {
                     dbg!(window);
-                    let ret: &NSString = msg_send![window, title];
-                    let utf8title = ret.UTF8String();
+                    let ret: *const NSString = msg_send![window, title];
+                    let utf8title = (*ret).UTF8String();
                     let title = CStr::from_ptr(utf8title);
                     dbg!(title);
                     // std::str::from_utf8(utf8title);
