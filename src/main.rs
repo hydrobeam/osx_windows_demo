@@ -54,6 +54,8 @@ fn main() -> Result<(), ()> {
     let block = ConcreteBlock::new(
         |shareableContent: *const SCShareableContent, error: *const NSError| {
             // if error.is_
+            dbg!(shareableContent);
+            dbg!(error);
             let windows: &NSArray = unsafe { msg_send![shareableContent, applications] };
             dbg!(windows);
             unsafe {
