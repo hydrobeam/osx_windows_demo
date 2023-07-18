@@ -223,6 +223,7 @@ fn main() -> Result<(), ()> {
                     let did_setup: bool = unsafe {
                         msg_send![&stream, addStreamOutput:&*stream_output_consumer type:1
                                   sampleHandlerQueue:null_p
+                                  error:null_p
                         ]
                     };
                     // let meow = eater.into();
