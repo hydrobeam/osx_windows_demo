@@ -63,8 +63,8 @@ fn main() -> Result<(), ()> {
                     dbg!(window);
                     let ret: *const NSString = msg_send![window, title];
                     let utf8title = (*ret).UTF8String();
-                    let title = CStr::from_ptr(utf8title);
-                    dbg!(title);
+                    let title = CStr::from_ptr(utf8title).to_str().unwrap();
+                    println!("{title}");
                     // std::str::from_utf8(utf8title);
                 }
             }
@@ -76,7 +76,6 @@ fn main() -> Result<(), ()> {
 
     // block
     let sc_shareable = class!(SCShareableContent);
-    dbg!("??");
     unsafe {
         let a: () = msg_send![
             sc_shareable,
