@@ -8,6 +8,9 @@ use core_graphics::{event, window};
 use icrate::ns_string;
 use objc2::rc::{Allocated, Id};
 use std::ffi::{c_void, CStr};
+use std::ops::Deref;
+
+use dispatch::Queue;
 
 use objc2::{
     class, extern_class, msg_send, mutability,
@@ -15,6 +18,18 @@ use objc2::{
     ClassType,
 };
 
+struct MyQueue(Queue);
+impl Deref for MyQueue {
+    type Target = Queue;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+unsafe impl Encode for MyQueue {
+    const ENCODING: objc2::Encoding = objc2::Encoding::Pointer(&objc2::Encoding::Object);
+}
 use icrate::Foundation::{NSArray, NSErrorDomain, NSObject, NSObjectProtocol, NSString};
 
 extern_class!(
@@ -212,11 +227,14 @@ fn main() -> Result<(), ()> {
                     // [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
                     // NSErrorDomain::NAME;
                     let err = NSError::new(0, ns_string!("this domain"));
+                    let queue =
+                        MyQueue(Queue::create("wlo_rust", dispatch::QueueAttribute::Serial));
+                    use dispatch::ffi::dispatch_queue_t;
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
                                   type:0_i64
-                                  sampleHandlerQueue:null_p
+                                  sampleHandlerQueue:queue
                                   error:&&*err
                         ]
                     };
