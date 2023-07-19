@@ -174,7 +174,6 @@ fn main() -> Result<(), ()> {
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
                     let filter: Id<NSObject> =
                         unsafe { msg_send_id![f_obj, initWithDesktopIndependentWindow:window] };
-                    dbg!(&filter);
 
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
@@ -189,6 +188,7 @@ fn main() -> Result<(), ()> {
                             delegate:&*delegate
                         ]
                     };
+                    dbg!(&stream);
 
                     let stream_handler = ConcreteBlock::new(|error: *const NSError| {
                         if !error.is_null() {
