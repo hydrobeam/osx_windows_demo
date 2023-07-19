@@ -79,7 +79,7 @@ use icrate::Foundation::NSInteger;
 extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait StreamOutput: NSObjectProtocol {
-        #[method(stream:didOutputSampleBuffer:ofType:)]
+        #[method(stream:didOutputSampleBuffer:fType:)]
         fn stream(
             the_stream: *const Object,
             sample_buffer: *const Object,
