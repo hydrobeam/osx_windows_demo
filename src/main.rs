@@ -245,6 +245,7 @@ fn main() -> Result<(), ()> {
                     // let dq_init: Id<Object> =
                     //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
                     let null_p: *const Object = std::ptr::null();
+                    dbg!(&*stream_config);
                     // [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
                     // NSErrorDomain::NAME;
                     let err = NSError::new(0, ns_string!("this domain"));
