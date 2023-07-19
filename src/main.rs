@@ -79,7 +79,7 @@ use icrate::Foundation::NSInteger;
 extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait StreamOutput: NSObjectProtocol {
-        #[method(stream:didOutputSampleBuffer:fType:)]
+        #[method(stream:didOutputSampleBuffer:ofType:)]
         fn stream(
             the_stream: *const Object,
             sample_buffer: *const Object,
@@ -143,24 +143,10 @@ declare_class!(
         }
     }
 );
-unsafe impl Encode for StreamEat {
-    const ENCODING: objc2::Encoding = objc2::Encoding::Object;
-}
-
-unsafe impl RefEncode for dyn StreamOutput {
-    const ENCODING_REF: objc2::Encoding = objc2::Encoding::Object;
-}
-// #[no_mangle]
-// pub unsafe extern "C" fn wlist_basic(block: &ConcreteBlock<(i32, i32), i32>) -> i32 {
-//     block.call((5, 8))
-// }
 
 // Required to bring NSPasteboard into the path of the class-resolver
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
-
-// #[link(name = "dispatch", kind = "framework")]
-// extern "C" {}
 
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
@@ -244,6 +230,7 @@ fn main() -> Result<(), ()> {
                     let _: () = unsafe {
                         msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
+                    std::thread::sleep(std::time::Duration::from_secs(5));
                 }
             }
         },
@@ -258,7 +245,7 @@ fn main() -> Result<(), ()> {
         ];
     };
     // give the callback time to execute
-    std::thread::sleep(std::time::Duration::from_secs(10));
+    std::thread::sleep(std::time::Duration::from_secs(1));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
