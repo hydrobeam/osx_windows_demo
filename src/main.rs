@@ -220,6 +220,10 @@ fn main() -> Result<(), ()> {
 
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
+                    unsafe {
+                        let _: () = msg_send![&*stream_config, setWidth:w];
+                        let _: () = msg_send![&*stream_config, setHeight:h];
+                    };
 
                     let delegate: Id<SCDelegate> =
                         unsafe { msg_send_id![SCDelegate::alloc(), init] };
