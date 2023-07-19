@@ -170,6 +170,7 @@ declare_class!(
     }
 );
 
+#[derive(Debug)]
 struct SendQueue<T>(*const T);
 
 // unsafe impl<T> RefEncode for SendQueue<T> {
@@ -252,6 +253,7 @@ fn main() -> Result<(), ()> {
                     let label = CString::new("wlo_rust").unwrap();
                     let attr = 0 as dispatch_queue_attr_t;
                     let queue = SendQueue(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
+                    dbg!(queue.0);
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
