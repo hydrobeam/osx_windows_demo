@@ -230,7 +230,7 @@ fn main() -> Result<(), ()> {
                     let _: () = unsafe {
                         msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
-                    std::thread::sleep(std::time::Duration::from_secs(5));
+                    break;
                 }
             }
         },
