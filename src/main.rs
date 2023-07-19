@@ -40,7 +40,7 @@ unsafe impl RefEncode for MyQueue {
     const ENCODING_REF: objc2::Encoding = objc2::Encoding::Object;
 }
 
-use icrate::Foundation::{NSArray, NSErrorDomain, NSObject, NSObjectProtocol, NSString};
+use icrate::Foundation::{CGRect, NSArray, NSErrorDomain, NSObject, NSObjectProtocol, NSString};
 
 extern_class!(
     #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
@@ -210,9 +210,9 @@ fn main() -> Result<(), ()> {
                 let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
                 if title.contains("osx") {
                     // SCWindow
-                    let frame: *const Object = unsafe { msg_send![window, frame] };
-                    let h: f64 = unsafe { msg_send![frame, height] };
-                    let w: f64 = unsafe { msg_send![frame, width] };
+                    let cg_rect: CGRect = unsafe { msg_send![window, frame] };
+                    let h = cg_rect.size.height;
+                    let w = cg_rect.size.width;
                     dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
                     let filter: Id<NSObject> =
