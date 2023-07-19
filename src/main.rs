@@ -111,6 +111,7 @@ declare_class!(
             sample_buffer: *const Object,
             output_type: NSInteger,
         ) {
+            dbg!(sample_buffer);
             dbg!("hi");
         }
     }
