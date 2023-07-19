@@ -78,7 +78,7 @@ use objc2::ProtocolType;
 use icrate::Foundation::NSInteger;
 extern_protocol!(
     /// This comment will appear on the trait as expected.
-    pub unsafe trait StreamOutput: NSObjectProtocol {
+    pub unsafe trait SCtreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         fn stream(
             the_stream: *const Object,
@@ -86,7 +86,7 @@ extern_protocol!(
             output_type: NSInteger,
         ) -> ();
     }
-    unsafe impl ProtocolType for dyn StreamOutput {}
+    unsafe impl ProtocolType for dyn SCtreamOutput {}
 );
 
 use objc2::declare::IvarEncode;
@@ -104,7 +104,7 @@ declare_class!(
     }
     unsafe impl NSObjectProtocol for StreamEat {}
 
-    unsafe impl StreamOutput for StreamEat {
+    unsafe impl SCtreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
             the_stream: *const Object,
