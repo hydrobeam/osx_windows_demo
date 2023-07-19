@@ -227,7 +227,7 @@ fn main() -> Result<(), ()> {
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
-                                  ofType:0_i64
+                                  type:0_i64
                                   sampleHandlerQueue:null_p
                                   error:&&*err
                         ]
@@ -251,13 +251,12 @@ fn main() -> Result<(), ()> {
 
     // block
     let sc_shareable = class!(SCShareableContent);
-    let _: () = unsafe {
-        msg_send![
+    unsafe {
+        let _: () = msg_send![
             sc_shareable,
             getShareableContentWithCompletionHandler:&block
-        ]
+        ];
     };
-
     // give the callback time to execute
     std::thread::sleep(std::time::Duration::from_secs(10));
 
