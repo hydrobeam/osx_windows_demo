@@ -184,6 +184,8 @@ unsafe impl<T> Encode for SendQueue<T> {
 // Required to bring NSPasteboard into the path of the class-resolver
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
@@ -208,6 +210,10 @@ fn main() -> Result<(), ()> {
                 let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
                 if title.contains("osx") {
                     // SCWindow
+                    let frame: *const Object = unsafe { msg_send![window, frame] };
+                    let h: f64 = unsafe { msg_send![frame, height] };
+                    let w: f64 = unsafe { msg_send![frame, width] };
+                    dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
                     let filter: Id<NSObject> =
                         unsafe { msg_send_id![f_obj, initWithDesktopIndependentWindow:window] };
@@ -242,14 +248,7 @@ fn main() -> Result<(), ()> {
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-                    // let dq_init: Id<Object> =
-                    //     unsafe { msg_send_id![msg_send_id![d_queue, alloc], init] };
-                    let null_p: *const Object = std::ptr::null();
-                    dbg!(&**stream_config);
-                    // [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
-                    // NSErrorDomain::NAME;
                     let err = NSError::new(0, ns_string!("this domain"));
-                    // let queue = Queue::create("wlo_rust", dispatch::QueueAttribute::Serial);
                     use dispatch::ffi::dispatch_queue_t;
                     let label = CString::new("wlo_rust").unwrap();
                     let attr = 0 as dispatch_queue_attr_t;
