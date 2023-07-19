@@ -258,7 +258,7 @@ fn main() -> Result<(), ()> {
         ];
     };
     // give the callback time to execute
-    std::thread::sleep(std::time::Duration::from_secs(2));
+    std::thread::sleep(std::time::Duration::from_secs(10));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
