@@ -230,7 +230,7 @@ fn main() -> Result<(), ()> {
                     let _: () = unsafe {
                         msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
-                    // std::thread::sleep(std::time::Duration::from_secs(5));
+                    std::thread::sleep(std::time::Duration::from_secs(5));
                 }
             }
         },
@@ -245,7 +245,7 @@ fn main() -> Result<(), ()> {
         ];
     };
     // give the callback time to execute
-    std::thread::sleep(std::time::Duration::from_secs(3));
+    std::thread::sleep(std::time::Duration::from_secs(10));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
