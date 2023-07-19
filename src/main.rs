@@ -30,6 +30,11 @@ impl Deref for MyQueue {
 unsafe impl Encode for MyQueue {
     const ENCODING: objc2::Encoding = objc2::Encoding::Pointer(&objc2::Encoding::Object);
 }
+
+unsafe impl RefEncode for MyQueue {
+    const ENCODING_REF: objc2::Encoding = objc2::Encoding::Pointer(&objc2::Encoding::Object);
+}
+
 use icrate::Foundation::{NSArray, NSErrorDomain, NSObject, NSObjectProtocol, NSString};
 
 extern_class!(
@@ -234,7 +239,7 @@ fn main() -> Result<(), ()> {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
                                   type:0_i64
-                                  sampleHandlerQueue:queue
+                                  sampleHandlerQueue:&queue
                                   error:&&*err
                         ]
                     };
