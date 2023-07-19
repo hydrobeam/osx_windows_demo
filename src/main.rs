@@ -5,13 +5,18 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, C
 use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
 use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
+use dispatch::ffi::{dispatch_object_s, dispatch_queue_attr_t, dispatch_queue_create};
 use icrate::ns_string;
 use objc2::rc::{Allocated, Id};
-use std::ffi::{c_void, CStr};
+use std::ffi::{c_void, CStr, CString};
 use std::ops::Deref;
 
 use dispatch::Queue;
 
+// #[cfg_attr(
+//     any(target_os = "macos", target_os = "ios"),
+//     link(name = "System", kind = "dylib")
+// )]
 use objc2::{
     class, extern_class, msg_send, mutability,
     runtime::{Class, Object},
@@ -165,6 +170,16 @@ declare_class!(
     }
 );
 
+struct SendQueue<T>(*const T);
+
+// unsafe impl<T> RefEncode for SendQueue<T> {
+//     const ENCODING_REF: objc2::Encoding = objc2::Encoding::Pointer(&objc2::Encoding::Object);
+// }
+
+unsafe impl<T> Encode for SendQueue<T> {
+    const ENCODING: objc2::Encoding = objc2::Encoding::Object;
+}
+
 // Required to bring NSPasteboard into the path of the class-resolver
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
@@ -232,14 +247,16 @@ fn main() -> Result<(), ()> {
                     // [NSError errorWithDomain:@"the.domain" code:0 userInfo:nil]
                     // NSErrorDomain::NAME;
                     let err = NSError::new(0, ns_string!("this domain"));
-                    let queue =
-                        MyQueue(Queue::create("wlo_rust", dispatch::QueueAttribute::Serial));
+                    // let queue = Queue::create("wlo_rust", dispatch::QueueAttribute::Serial);
                     use dispatch::ffi::dispatch_queue_t;
+                    let label = CString::new("wlo_rust").unwrap();
+                    let attr = 0 as dispatch_queue_attr_t;
+                    let queue = SendQueue(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
                                   type:0_i64
-                                  sampleHandlerQueue:&queue
+                                  sampleHandlerQueue:queue
                                   error:&&*err
                         ]
                     };
