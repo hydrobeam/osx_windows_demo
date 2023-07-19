@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use block2::{Block, ConcreteBlock};
 use core_foundation::base::ToVoid;
 use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, CFDictionaryRef};
