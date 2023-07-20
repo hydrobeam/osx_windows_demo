@@ -106,11 +106,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
-        fn stream(
-            the_stream: *const Object,
-            sample_buffer: *const Object,
-            output_type: NSInteger,
-        ) -> ();
+        fn stream(the_stream: *const Object, sample_buffer: *const Object, output_type: NSInteger);
     }
     unsafe impl ProtocolType for dyn SCStreamOutput {}
 );
@@ -128,7 +124,6 @@ declare_class!(
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "StreamEat";
     }
-    unsafe impl NSObjectProtocol for StreamEat {}
 
     unsafe impl SCStreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
@@ -142,6 +137,7 @@ declare_class!(
         }
     }
 );
+unsafe impl NSObjectProtocol for StreamEat {}
 
 extern_protocol!(
     /// This comment will appear on the trait as expected.
@@ -171,20 +167,21 @@ declare_class!(
 );
 
 #[derive(Debug)]
-struct SendQueue<T>(*const T);
+struct SendPtr<T>(*const T);
 
 // unsafe impl<T> RefEncode for SendQueue<T> {
 //     const ENCODING_REF: objc2::Encoding = objc2::Encoding::Pointer(&objc2::Encoding::Object);
 // }
 
-unsafe impl<T> Encode for SendQueue<T> {
+unsafe impl<T> Encode for SendPtr<T> {
     const ENCODING: objc2::Encoding = objc2::Encoding::Object;
 }
 
-// Required to bring NSPasteboard into the path of the class-resolver
 #[link(name = "ScreenCaptureKit", kind = "framework")]
 extern "C" {}
 #[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
+#[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
 fn main() -> Result<(), ()> {
@@ -223,6 +220,7 @@ fn main() -> Result<(), ()> {
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
+                        let _: () = msg_send![&*stream_config, setqueueDepth:6];
                     };
 
                     let delegate: Id<SCDelegate> =
@@ -237,27 +235,14 @@ fn main() -> Result<(), ()> {
                     };
                     dbg!(&stream);
 
-                    let stream_handler = ConcreteBlock::new(|error: *const NSError| {
-                        if !error.is_null() {
-                            panic!("unable to initialize stream")
-                        }
-                    });
-                    // msg_send![stream, ]
-
-                    // StreamOutput::stream(the_stream, sample_buffer, output_type)
-
-                    // let stream_output_consumer =
-                    //     unsafe { std::mem::transmute::<_, Id<NSObject>>(stream_output_consumer) };
-
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-                    let err = NSError::new(0, ns_string!("this domain"));
+                    let err = NSError::new(0, ns_string!("ScreenRecorder.WackyError"));
                     use dispatch::ffi::dispatch_queue_t;
-                    let label = CString::new("wlo_rust").unwrap();
+                    let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                     let attr = 0 as dispatch_queue_attr_t;
-                    let queue = SendQueue(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
-                    dbg!(queue.0);
+                    let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
                                   addStreamOutput:&*stream_output_consumer
