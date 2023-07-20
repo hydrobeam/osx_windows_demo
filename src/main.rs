@@ -212,8 +212,11 @@ fn main() -> Result<(), ()> {
                     let w = cg_rect.size.width as u64;
                     dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
-                    let filter: Id<NSObject> =
-                        unsafe { msg_send_id![f_obj, initWithDisplay:display] };
+                    let null: *const std::ffi::c_void = std::ptr::null();
+                    let filter: Id<NSObject> = unsafe {
+                        msg_send_id![f_obj, initWithDisplay:display
+                        excludingWindows:null]
+                    };
 
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
