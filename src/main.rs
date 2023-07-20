@@ -139,11 +139,11 @@ declare_class!(
     }
 
     unsafe impl SCStreamOutput for StreamEat {
-        #[method(stream:didOutputSampleBuffer:ofType:)]
+        #[method(stream)]
         unsafe fn stream(
             &self,
             stream: *const Object,
-            didOutputSampleBuffer: &Object,
+            sampleBuffer: &Object,
             ofType: NSInteger,
         ) {
             dbg!("WHAT OUTPUT");
@@ -151,7 +151,7 @@ declare_class!(
     }
 
     unsafe impl SCStreamDelegate for StreamEat {
-        #[method(stream:didStopWithError:)]
+        #[method(stream_delegate)]
         unsafe fn stream_delegate(
             &self,
             stream: *const Object,
