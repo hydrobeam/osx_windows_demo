@@ -213,9 +213,10 @@ fn main() -> Result<(), ()> {
                     dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
                     let null: *const std::ffi::c_void = std::ptr::null();
+                    let null = NSArray::<Object>::new();
                     let filter: Id<NSObject> = unsafe {
                         msg_send_id![f_obj, initWithDisplay:display
-                        excludingWindows:null]
+                        excludingWindows:&*null]
                     };
 
                     let stream_config: Id<NSObject> =
