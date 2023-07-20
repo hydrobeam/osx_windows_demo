@@ -215,6 +215,7 @@ fn main() -> Result<(), ()> {
                     let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                     let attr = 0 as dispatch_queue_attr_t;
                     let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
+                    let queue: *const i32 = std::ptr::null();
                     // let queue = SendPtr(dispatch_get_main_queue());
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
@@ -233,6 +234,7 @@ fn main() -> Result<(), ()> {
                             println!("Started streaming!!!!!")
                         }
                     });
+
                     let _: () = unsafe {
                         msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
