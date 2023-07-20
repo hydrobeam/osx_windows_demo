@@ -206,7 +206,9 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
+                    dbg!("post time");
                     let time: Object = unsafe { CMTimeMakeWithSeconds(5.0, 60) };
+                    dbg!("post time");
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
