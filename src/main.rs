@@ -125,17 +125,17 @@ declare_class!(
         const NAME: &'static str = "StreamEat";
     }
 
-    unsafe impl SCStreamOutput for StreamEat {
-        #[method(csity:didOutputSampleBuffer:ofType:)]
-        unsafe fn stream(
-            the_stream: *const Object,
-            sample_buffer: *const Object,
-            output_type: NSInteger,
-        ) {
-            dbg!(sample_buffer);
-            dbg!("hi");
-        }
-    }
+    // unsafe impl SCStreamOutput for StreamEat {
+    //     #[method(csity:didOutputSampleBuffer:ofType:)]
+    //     unsafe fn stream(
+    //         the_stream: *const Object,
+    //         sample_buffer: *const Object,
+    //         output_type: NSInteger,
+    //     ) {
+    //         dbg!(sample_buffer);
+    //         dbg!("hi");
+    //     }
+    // }
 );
 unsafe impl NSObjectProtocol for StreamEat {}
 
@@ -158,12 +158,12 @@ declare_class!(
     }
     unsafe impl NSObjectProtocol for SCDelegate {}
 
-    unsafe impl SCStreamDelegate for SCDelegate {
-        #[method(stream:didStopWithError:)]
-        unsafe fn stream(stream: *const Object, did_stop_with_error: *const NSError) {
-            dbg!("hi");
-        }
-    }
+    // unsafe impl SCStreamDelegate for SCDelegate {
+    //     #[method(stream:didStopWithError:)]
+    //     unsafe fn stream(stream: *const Object, did_stop_with_error: *const NSError) {
+    //         dbg!("hi");
+    //     }
+    // }
 );
 
 #[derive(Debug)]
