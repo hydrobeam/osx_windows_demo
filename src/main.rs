@@ -229,7 +229,8 @@ fn main() -> Result<(), ()> {
                         delegate:&*stream_output_consumer
                     ]
                 };
-                let null_err = std::ptr::null() as *const *const Object;
+                let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
+                // let a = std::ptr::null() as *const *const Object;
 
                 // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                 // let attr = 0 as dispatch_queue_attr_t;
@@ -242,7 +243,7 @@ fn main() -> Result<(), ()> {
                               addStreamOutput:&*stream_output_consumer
                               type:0_i64
                               sampleHandlerQueue:queue
-                              error:null_err
+                              error:&&*err
                     ]
                 };
                 dbg!(did_setup);
