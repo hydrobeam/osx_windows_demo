@@ -208,8 +208,8 @@ fn main() -> Result<(), ()> {
                 if title.contains("osx") {
                     // SCWindow
                     let cg_rect: CGRect = unsafe { msg_send![window, frame] };
-                    let h = cg_rect.size.height;
-                    let w = cg_rect.size.width;
+                    let h = cg_rect.size.height as u64;
+                    let w = cg_rect.size.width as u64;
                     dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
                     let filter: Id<NSObject> =
