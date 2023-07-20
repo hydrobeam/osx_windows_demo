@@ -208,6 +208,8 @@ fn main() -> Result<(), ()> {
                 let stream_config: Id<NSObject> =
                     unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
+                // config
+
                 // unsafe {
                 //     let cg_rect: CGRect = unsafe { msg_send![display, frame] };
                 //     let h = cg_rect.size.height as u64;
@@ -227,7 +229,8 @@ fn main() -> Result<(), ()> {
                         delegate:&*stream_output_consumer
                     ]
                 };
-                let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
+                let null_err = std::ptr::null() as *const *const Object;
+
                 // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                 // let attr = 0 as dispatch_queue_attr_t;
                 // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
@@ -239,7 +242,7 @@ fn main() -> Result<(), ()> {
                               addStreamOutput:&*stream_output_consumer
                               type:0_i64
                               sampleHandlerQueue:queue
-                              error:&&*err
+                              error:null_err
                     ]
                 };
                 dbg!(did_setup);
