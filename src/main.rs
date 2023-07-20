@@ -89,7 +89,7 @@ declare_class!(
 
     unsafe impl ClassType for StreamEat {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
+        type Mutability = mutability::Mutable;
         const NAME: &'static str = "osx_StreamEat";
     }
 
