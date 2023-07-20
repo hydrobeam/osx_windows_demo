@@ -204,7 +204,7 @@ fn main() -> Result<(), ()> {
 
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
-                    dbg!(&stream_output_consumer);
+                    dbg!(&*stream_output_consumer);
 
                     let stream: Id<NSObject> = unsafe {
                         msg_send_id![
