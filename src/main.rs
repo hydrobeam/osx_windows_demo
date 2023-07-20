@@ -118,7 +118,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
-        fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError) -> ();
+        fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError);
     }
     unsafe impl ProtocolType for dyn SCStreamDelegate {}
 );
@@ -249,6 +249,8 @@ fn main() -> Result<(), ()> {
                     let _: () = unsafe {
                         msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
+
+                    std::thread::sleep(std::time::Duration::from_secs(5));
                     break;
                 }
             }
@@ -264,7 +266,7 @@ fn main() -> Result<(), ()> {
         ];
     };
     // give the callback time to execute
-    std::thread::sleep(std::time::Duration::from_secs(10));
+    std::thread::sleep(std::time::Duration::from_secs(5));
 
     // unsafe { msg_send![qq, completionHandler:&block] }
 
