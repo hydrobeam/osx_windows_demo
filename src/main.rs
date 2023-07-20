@@ -5,7 +5,10 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, C
 use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
 use core_foundation::{base::CFTypeRef, string::CFStringRef};
 use core_graphics::{event, window};
-use dispatch::ffi::{dispatch_object_s, dispatch_queue_attr_t, dispatch_queue_create};
+use dispatch::ffi::{
+    dispatch_get_main_queue, dispatch_object_s, dispatch_queue_attr_t, dispatch_queue_create,
+    dispatch_queue_t,
+};
 use icrate::ns_string;
 use objc2::rc::{Allocated, Id};
 use std::ffi::{c_void, CStr, CString};
@@ -47,10 +50,6 @@ unsafe impl Encode for CMTime {
 // }
 use dispatch::Queue;
 
-// #[cfg_attr(
-//     any(target_os = "macos", target_os = "ios"),
-//     link(name = "System", kind = "dylib")
-// )]
 use objc2::{
     class, extern_class, msg_send, mutability,
     runtime::{Class, Object},
@@ -100,42 +99,6 @@ use objc2::{
 };
 
 use objc2::ProtocolType;
-// //                                  ^^^^^^^^^^^^^^^^
-// // This protocol inherits from the `NSObject` protocol
-
-// // This method we mark as `unsafe`, since we aren't using the correct
-// // type for the completion handler
-// #[method_id(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:)]
-// unsafe fn loadData(
-//     &self,
-//     type_identifier: &NSString,
-//     completion_handler: *mut c_void,
-// ) -> Option<Id<NSProgress>>;
-
-// #[method_id(writableTypeIdentifiersForItemProvider)]
-// fn writableTypeIdentifiersForItemProvider_class()
-//     -> Id<NSArray<NSString>>;
-
-// // The rest of these are optional, which means that a user of
-// // `declare_class!` would not need to implement them.
-
-// #[optional]
-// #[method_id(writableTypeIdentifiersForItemProvider)]
-// fn writableTypeIdentifiersForItemProvider(&self)
-//     -> Id<NSArray<NSString>>;
-
-// #[optional]
-// #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
-// fn itemProviderVisibilityForRepresentation_class(
-//     type_identifier: &NSString,
-// ) -> NSItemProviderRepresentationVisibility;
-
-// #[optional]
-// #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
-// fn itemProviderVisibilityForRepresentation(
-//     &self,
-//     type_identifier: &NSString,
-// ) -> NSItemProviderRepresentationVisibility;
 
 use icrate::Foundation::NSInteger;
 extern_protocol!(
@@ -147,48 +110,42 @@ extern_protocol!(
     unsafe impl ProtocolType for dyn SCStreamOutput {}
 );
 
-use objc2::declare::IvarEncode;
-declare_class!(
-    struct StreamEat {
-        // foo: IvarEncode<u8, "_foo">,
-        // pub bar: IvarEncode<c_int, "_bar">,
-        // object: IvarDrop<Id<NSObject>, "_object">,
+extern_protocol!(
+    /// This comment will appear on the trait as expected.
+    pub unsafe trait SCStreamDelegate: NSObjectProtocol {
+        #[method(stream:didStopWithError:)]
+        fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError) -> ();
     }
+    unsafe impl ProtocolType for dyn SCStreamDelegate {}
+);
+
+declare_class!(
+    struct StreamEat {}
 
     unsafe impl ClassType for StreamEat {
         type Super = NSObject;
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "StreamEat";
     }
+
+    unsafe impl SCStreamOutput for StreamEat {
+        #[method(stream:didOutputSampleBuffer:ofType:)]
+        unsafe fn stream(stream: *const Object, didOutputSampleBuffer: &Object, ofType: NSInteger) {
+            dbg!("hi");
+        }
+    }
+
+    unsafe impl SCStreamDelegate for StreamEat {
+        #[method(stream:didStopWithError:)]
+        unsafe fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError) {
+            dbg!("hi");
+        }
+    }
 );
 unsafe impl NSObjectProtocol for StreamEat {}
 
-extern_protocol!(
-    /// This comment will appear on the trait as expected.
-    pub unsafe trait SCStreamDelegate: NSObjectProtocol {
-        #[method(csity:didStopWithError:)]
-        fn stream(stream: *const Object, did_stop_with_error: *const NSError) -> ();
-    }
-    unsafe impl ProtocolType for dyn SCStreamDelegate {}
-);
-
-declare_class!(
-    struct SCDelegate {}
-
-    unsafe impl ClassType for SCDelegate {
-        type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
-        const NAME: &'static str = "SCDelegate";
-    }
-    unsafe impl NSObjectProtocol for SCDelegate {}
-);
-
 #[derive(Debug)]
 struct SendPtr<T>(*const T);
-
-// unsafe impl<T> RefEncode for SendQueue<T> {
-//     const ENCODING_REF: objc2::Encoding = objc2::Encoding::Pointer(&objc2::Encoding::Object);
-// }
 
 unsafe impl<T> Encode for SendPtr<T> {
     const ENCODING: objc2::Encoding = objc2::Encoding::Object;
@@ -242,9 +199,7 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
-                    dbg!("pre time");
-                    let time: CMTime = unsafe { CMTimeMake(5_i64, 60_i32) };
-                    dbg!("post time");
+                    let time: CMTime = unsafe { CMTimeMake(5, 60) };
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
@@ -253,27 +208,22 @@ fn main() -> Result<(), ()> {
                     };
                     // use icrate::Foundation::
 
-                    let delegate: Id<SCDelegate> =
-                        unsafe { msg_send_id![SCDelegate::alloc(), init] };
+                    let stream_output_consumer: Id<StreamEat> =
+                        unsafe { msg_send_id![StreamEat::alloc(), init] };
 
                     let stream: Id<NSObject> = unsafe {
                         msg_send_id![
                             msg_send_id![sc_stream, alloc], initWithFilter:&*filter
                             configuration:&*stream_config
-                            delegate:&*delegate
+                            delegate:&*stream_output_consumer
                         ]
                     };
                     dbg!(&stream);
 
-                    let stream_output_consumer: Id<StreamEat> =
-                        unsafe { msg_send_id![StreamEat::alloc(), init] };
-
                     let err = NSError::new(0, ns_string!("ScreenRecorder.WackyError"));
-                    use dispatch::ffi::dispatch_queue_t;
                     let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                     let attr = 0 as dispatch_queue_attr_t;
                     let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
-                    use dispatch::ffi::dispatch_get_main_queue;
                     let queue = SendPtr(dispatch_get_main_queue());
                     let did_setup: bool = unsafe {
                         msg_send![&stream,
