@@ -130,7 +130,6 @@ checksum = "3cf6c364d54fa7b8be594c17b1506d5fe332038d3f6ef7b4ce36a5788798634c"
 dependencies = [
  "objc-sys",
  "objc2-encode",
- "objc2-proc-macros",
 ]
 
 [[package]]
@@ -138,12 +137,6 @@ name = "objc2-encode"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "de517cb1d179b07c6c59fb4ce60f7511eba229a2488472bb41f00344d22a091e"
-
-[[package]]
-name = "objc2-proc-macros"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b907b825b8c265dd8c4581472273184e75c12825f67d31ba18c5c8cdb5d5431e"
 
 [[package]]
 name = "proc-macro2"
