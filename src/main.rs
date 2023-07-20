@@ -109,7 +109,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
-        fn stream(the_stream: *const Object, sample_buffer: *const Object, output_type: NSInteger);
+        fn stream(the_stream: *const NSObject, sample_buffer: *const NSObject, output_type: NSInteger);
     }
     unsafe impl ProtocolType for dyn SCStreamOutput {}
 );
@@ -118,7 +118,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
-        fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError);
+        fn stream_delegate(stream: *const NSObject, did_stop_with_error: *const NSError);
     }
     unsafe impl ProtocolType for dyn SCStreamDelegate {}
 );
