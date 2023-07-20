@@ -61,7 +61,7 @@ extern_protocol!(
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         fn stream(
-            this: *mut Self,
+            &self,
             the_stream: *const NSObject,
             sample_buffer: *const NSObject,
             output_type: NSInteger,
@@ -74,11 +74,7 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
-        fn stream_delegate(
-            this: *mut Self,
-            stream: *const NSObject,
-            did_stop_with_error: *const NSError,
-        );
+        fn stream_delegate(&self, stream: *const NSObject, did_stop_with_error: *const NSError);
     }
     unsafe impl ProtocolType for dyn SCStreamDelegate {}
 );
@@ -96,7 +92,7 @@ declare_class!(
     unsafe impl SCStreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
-            this: *mut Self,
+            &self,
             _stream: *const Object,
             _sampleBuffer: *const Object,
             _ofType: NSInteger,
@@ -108,7 +104,7 @@ declare_class!(
     unsafe impl SCStreamDelegate for StreamEat {
         #[method(stream:didStopWithError:)]
         unsafe fn stream_delegate(
-            this: *mut Self,
+            &self,
             _stream: *const Object,
             _did_stop_with_error: *const NSError,
         ) {
@@ -174,6 +170,11 @@ fn main() -> Result<(), ()> {
 
                 let stream_output_consumer: Id<StreamEat> =
                     unsafe { msg_send_id![StreamEat::alloc(), init] };
+                let null_obj: *const Object = std::ptr::null();
+
+                let _: () = unsafe {
+                    msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
+                };
 
                 let stream: Id<NSObject> = unsafe {
                     msg_send_id![
