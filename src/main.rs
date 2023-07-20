@@ -220,7 +220,7 @@ fn main() -> Result<(), ()> {
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
-                        let _: () = msg_send![&*stream_config, setQueueDepth:6];
+                        let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
                     };
 
                     let delegate: Id<SCDelegate> =
