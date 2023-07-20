@@ -10,7 +10,41 @@ use icrate::ns_string;
 use objc2::rc::{Allocated, Id};
 use std::ffi::{c_void, CStr, CString};
 use std::ops::Deref;
+pub type CMTimeValue = i64;
+pub type CMTimeScale = i32;
+pub type CMTimeEpoch = i64;
+pub const CMTimeFlags_kCMTimeFlags_Valid: CMTimeFlags = 1;
+pub const CMTimeFlags_kCMTimeFlags_HasBeenRounded: CMTimeFlags = 2;
+pub const CMTimeFlags_kCMTimeFlags_PositiveInfinity: CMTimeFlags = 4;
+pub const CMTimeFlags_kCMTimeFlags_NegativeInfinity: CMTimeFlags = 8;
+pub const CMTimeFlags_kCMTimeFlags_Indefinite: CMTimeFlags = 16;
+pub const CMTimeFlags_kCMTimeFlags_ImpliedValueFlagsMask: CMTimeFlags = 28;
+pub type CMTimeFlags = u32;
+#[repr(C, packed(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct CMTime {
+    pub value: CMTimeValue,
+    pub timescale: CMTimeScale,
+    pub flags: CMTimeFlags,
+    pub epoch: CMTimeEpoch,
+}
 
+unsafe impl Encode for CMTime {
+    const ENCODING: Encoding = Encoding::Struct(
+        "CMTime",
+        &[
+            Encoding::LongLong,
+            Encoding::Int,
+            Encoding::LongLong,
+            Encoding::UInt,
+        ],
+    );
+}
+
+// unsafe impl Encode for CGRect {
+//     const ENCODING: Encoding =
+//         Encoding::Struct(names::RECT, &[CGPoint::ENCODING, CGSize::ENCODING]);
+// }
 use dispatch::Queue;
 
 // #[cfg_attr(
@@ -61,7 +95,9 @@ extern_class!(
 );
 
 use icrate::Foundation::NSError;
-use objc2::{declare_class, extern_methods, extern_protocol, msg_send_id, Encode, RefEncode};
+use objc2::{
+    declare_class, extern_methods, extern_protocol, msg_send_id, Encode, Encoding, RefEncode,
+};
 
 use objc2::ProtocolType;
 // //                                  ^^^^^^^^^^^^^^^^
@@ -164,7 +200,7 @@ extern "C" {}
 extern "C" {}
 #[link(name = "CoreMedia", kind = "framework")]
 extern "C" {
-    pub fn CMTimeMakeWithSeconds(seconds: f64, timescale: i32) -> Object;
+    pub fn CMTimeMake(value: i64, timescale: i32) -> CMTime;
 }
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
@@ -206,14 +242,14 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
-                    dbg!("post time");
-                    let time: Object = unsafe { CMTimeMakeWithSeconds(5.0, 60) };
+                    dbg!("pre time");
+                    let time: CMTime = unsafe { CMTimeMake(5_i64, 60_i32) };
                     dbg!("post time");
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
                         let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
-                        let _: () = msg_send![&*stream_config, setMinimumFrameInterval:&time];
+                        let _: () = msg_send![&*stream_config, setMinimumFrameInterval:time];
                     };
                     // use icrate::Foundation::
 
