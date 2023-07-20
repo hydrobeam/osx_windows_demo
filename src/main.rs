@@ -1,20 +1,17 @@
-#![allow(unused_imports)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
-use block2::{Block, ConcreteBlock};
-use core_foundation::base::ToVoid;
-use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, CFDictionaryRef};
-use core_foundation::string::{kCFStringEncodingUTF8, CFString, CFStringGetCStringPtr};
-use core_foundation::{base::CFTypeRef, string::CFStringRef};
-use core_graphics::{event, window};
-use dispatch::ffi::{
-    dispatch_get_main_queue, dispatch_object_s, dispatch_queue_attr_t, dispatch_queue_create,
-    dispatch_queue_t,
+use block2::ConcreteBlock;
+use icrate::{
+    ns_string,
+    Foundation::{NSArray, NSError, NSInteger, NSObject, NSObjectProtocol},
 };
-use icrate::ns_string;
-use objc2::rc::{Allocated, Id};
-use std::ffi::{c_void, CStr, CString};
-use std::ops::Deref;
+
+use objc2::rc::Id;
+use objc2::{
+    class, declare_class, extern_class, extern_protocol, msg_send, msg_send_id, mutability,
+    runtime::Object, ClassType, Encode, Encoding, ProtocolType, RefEncode,
+};
+
 pub type CMTimeValue = i64;
 pub type CMTimeScale = i32;
 pub type CMTimeEpoch = i64;
@@ -50,37 +47,6 @@ unsafe impl RefEncode for CMTime {
     const ENCODING_REF: Encoding = Self::ENCODING;
 }
 
-// unsafe impl Encode for CGRect {
-//     const ENCODING: Encoding =
-//         Encoding::Struct(names::RECT, &[CGPoint::ENCODING, CGSize::ENCODING]);
-// }
-use dispatch::Queue;
-
-use objc2::{
-    class, extern_class, msg_send, mutability,
-    runtime::{Class, Object},
-    ClassType,
-};
-
-struct MyQueue(Queue);
-impl Deref for MyQueue {
-    type Target = Queue;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-unsafe impl Encode for MyQueue {
-    const ENCODING: objc2::Encoding = objc2::Encoding::Object;
-}
-
-unsafe impl RefEncode for MyQueue {
-    const ENCODING_REF: objc2::Encoding = objc2::Encoding::Object;
-}
-
-use icrate::Foundation::{CGRect, NSArray, NSErrorDomain, NSObject, NSObjectProtocol, NSString};
-
 extern_class!(
     #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
     pub struct SCShareableContent;
@@ -90,23 +56,6 @@ extern_class!(
     }
 );
 
-extern_class!(
-    #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
-    pub struct CMSampleBuffer;
-    unsafe impl ClassType for CMSampleBuffer {
-        type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
-    }
-);
-
-use icrate::Foundation::NSError;
-use objc2::{
-    declare_class, extern_methods, extern_protocol, msg_send_id, Encode, Encoding, RefEncode,
-};
-
-use objc2::ProtocolType;
-
-use icrate::Foundation::NSInteger;
 extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
@@ -144,11 +93,11 @@ declare_class!(
         #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
             &self,
-            stream: *const Object,
-            sampleBuffer: *const Object,
-            ofType: NSInteger,
+            _stream: *const Object,
+            _sampleBuffer: *const Object,
+            _ofType: NSInteger,
         ) {
-            dbg!("WHAT OUTPUT");
+            dbg!("OUTPUT");
         }
     }
 
@@ -156,10 +105,10 @@ declare_class!(
         #[method(stream:didStopWithError:)]
         unsafe fn stream_delegate(
             &self,
-            stream: *const Object,
-            did_stop_with_error: *const NSError,
+            _stream: *const Object,
+            _did_stop_with_error: *const NSError,
         ) {
-            dbg!("WHAT DELEGATE");
+            dbg!("DELEGATE");
         }
     }
 );
@@ -196,7 +145,7 @@ fn main() -> Result<(), ()> {
             let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
             dbg!(displays.len());
 
-            for display in displays.iter() {
+            if let Some(display) = displays.iter().next() {
                 let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
 
                 let null = NSArray::<Object>::new();
@@ -259,7 +208,6 @@ fn main() -> Result<(), ()> {
                 let _: () = unsafe {
                     msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                 };
-                break;
             }
         },
     );
