@@ -146,8 +146,7 @@ declare_class!(
             didOutputSampleBuffer: &Object,
             ofType: NSInteger,
         ) {
-            let a: *const i32 = std::ptr::null();
-            unsafe { *a };
+            dbg!("WHAT OUTPUT");
         }
     }
 
@@ -158,8 +157,7 @@ declare_class!(
             stream: *const Object,
             did_stop_with_error: *const NSError,
         ) {
-            let a: *const i32 = std::ptr::null();
-            unsafe { *a };
+            dbg!("WHAT DELEGATE");
         }
     }
 );
