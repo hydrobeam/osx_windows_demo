@@ -124,18 +124,6 @@ declare_class!(
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "StreamEat";
     }
-
-    // unsafe impl SCStreamOutput for StreamEat {
-    //     #[method(csity:didOutputSampleBuffer:ofType:)]
-    //     unsafe fn stream(
-    //         the_stream: *const Object,
-    //         sample_buffer: *const Object,
-    //         output_type: NSInteger,
-    //     ) {
-    //         dbg!(sample_buffer);
-    //         dbg!("hi");
-    //     }
-    // }
 );
 unsafe impl NSObjectProtocol for StreamEat {}
 
@@ -157,13 +145,6 @@ declare_class!(
         const NAME: &'static str = "SCDelegate";
     }
     unsafe impl NSObjectProtocol for SCDelegate {}
-
-    // unsafe impl SCStreamDelegate for SCDelegate {
-    //     #[method(stream:didStopWithError:)]
-    //     unsafe fn stream(stream: *const Object, did_stop_with_error: *const NSError) {
-    //         dbg!("hi");
-    //     }
-    // }
 );
 
 #[derive(Debug)]
@@ -181,6 +162,10 @@ unsafe impl<T> Encode for SendPtr<T> {
 extern "C" {}
 #[link(name = "CoreGraphics", kind = "framework")]
 extern "C" {}
+#[link(name = "CoreMedia", kind = "framework")]
+extern "C" {
+    pub fn CMTimeMakeWithSeconds(seconds: f64, timescale: i32) -> Object;
+}
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
@@ -220,11 +205,15 @@ fn main() -> Result<(), ()> {
 
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
+
+                    let time: Object = unsafe { CMTimeMakeWithSeconds(5.0, 60) };
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
                         let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
+                        let _: () = msg_send![&*stream_config, setMinimumFrameInterval:&time];
                     };
+                    // use icrate::Foundation::
 
                     let delegate: Id<SCDelegate> =
                         unsafe { msg_send_id![SCDelegate::alloc(), init] };
