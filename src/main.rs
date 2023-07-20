@@ -135,14 +135,16 @@ declare_class!(
     unsafe impl SCStreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(stream: *const Object, didOutputSampleBuffer: &Object, ofType: NSInteger) {
-            dbg!("hi");
+            let a: *const i32 = std::ptr::null();
+            unsafe { *a };
         }
     }
 
     unsafe impl SCStreamDelegate for StreamEat {
         #[method(stream:didStopWithError:)]
         unsafe fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError) {
-            dbg!("hi");
+            let a: *const i32 = std::ptr::null();
+            unsafe { *a };
         }
     }
 );
