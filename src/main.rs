@@ -109,7 +109,12 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
-        fn stream(the_stream: *const NSObject, sample_buffer: *const NSObject, output_type: NSInteger);
+        fn stream(
+            &self,
+            the_stream: *const NSObject,
+            sample_buffer: *const NSObject,
+            output_type: NSInteger,
+        );
     }
     unsafe impl ProtocolType for dyn SCStreamOutput {}
 );
@@ -135,7 +140,12 @@ declare_class!(
 
     unsafe impl SCStreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
-        unsafe fn stream(&self, stream: *const Object, didOutputSampleBuffer: &Object, ofType: NSInteger) {
+        unsafe fn stream(
+            &self,
+            stream: *const Object,
+            didOutputSampleBuffer: &Object,
+            ofType: NSInteger,
+        ) {
             let a: *const i32 = std::ptr::null();
             unsafe { *a };
         }
@@ -143,7 +153,11 @@ declare_class!(
 
     unsafe impl SCStreamDelegate for StreamEat {
         #[method(stream:didStopWithError:)]
-        unsafe fn stream_delegate(stream: *const Object, did_stop_with_error: *const NSError) {
+        unsafe fn stream_delegate(
+            &self,
+            stream: *const Object,
+            did_stop_with_error: *const NSError,
+        ) {
             let a: *const i32 = std::ptr::null();
             unsafe { *a };
         }
