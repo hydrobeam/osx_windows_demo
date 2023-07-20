@@ -137,7 +137,7 @@ declare_class!(
     unsafe impl ClassType for StreamEat {
         type Super = NSObject;
         type Mutability = mutability::InteriorMutable;
-        const NAME: &'static str = "StreamEat";
+        const NAME: &'static str = "osx_StreamEat";
     }
 
     unsafe impl SCStreamOutput for StreamEat {
@@ -187,80 +187,79 @@ fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
     let sc_stream_configuration = class!(SCStreamConfiguration);
     let sc_stream = class!(SCStream);
+    // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
             if !error.is_null() {
                 panic!("unable to fetch windows, make sure permissions are granted");
             }
             let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
+            dbg!(displays.len());
+
             for display in displays.iter() {
-                {
-                    // SCWindow
-                    let cg_rect: CGRect = unsafe { msg_send![display, frame] };
-                    let h = cg_rect.size.height as u64;
-                    let w = cg_rect.size.width as u64;
-                    let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
+                let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
 
-                    let null = NSArray::<Object>::new();
-                    let filter: Id<NSObject> = unsafe {
-                        msg_send_id![f_obj, initWithDisplay:display
+                let null = NSArray::<Object>::new();
+                let filter: Id<NSObject> = unsafe {
+                    msg_send_id![f_obj, initWithDisplay:display
                         excludingWindows:&*null]
-                    };
+                };
 
-                    let stream_config: Id<NSObject> =
-                        unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
+                let stream_config: Id<NSObject> =
+                    unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
-                    unsafe {
-                        let _: () = msg_send![&*stream_config, setWidth:w];
-                        let _: () = msg_send![&*stream_config, setHeight:h];
-                        let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
-                    };
+                // unsafe {
+                //     let cg_rect: CGRect = unsafe { msg_send![display, frame] };
+                //     let h = cg_rect.size.height as u64;
+                //     let w = cg_rect.size.width as u64;
+                //     let _: () = msg_send![&*stream_config, setWidth:w];
+                //     let _: () = msg_send![&*stream_config, setHeight:h];
+                //     let _: () = msg_send![&*stream_config, setQueueDepth:2_i64];
+                // };
 
-                    let stream_output_consumer: Id<StreamEat> =
-                        unsafe { msg_send_id![StreamEat::alloc(), init] };
-                    dbg!(&***stream_output_consumer);
+                let stream_output_consumer: Id<StreamEat> =
+                    unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-                    let stream: Id<NSObject> = unsafe {
-                        msg_send_id![
-                            msg_send_id![sc_stream, alloc], initWithFilter:&*filter
-                            configuration:&*stream_config
-                            delegate:&*stream_output_consumer
-                        ]
-                    };
-                    let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
-                    let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
-                    let attr = 0 as dispatch_queue_attr_t;
-                    let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
-                    let queue: *const Object = std::ptr::null();
-                    // let queue = SendPtr(dispatch_get_main_queue());
-                    let did_setup: bool = unsafe {
-                        msg_send![&stream,
-                                  addStreamOutput:&*stream_output_consumer
-                                  type:0_i64
-                                  sampleHandlerQueue:queue
-                                  error:&&*err
-                        ]
-                    };
-                    dbg!(did_setup);
-                    // let meow = eater.into();
-                    let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
-                        if !error.is_null() {
-                            panic!("something went wrong with starting the stream capture")
-                        } else {
-                            println!("Started streaming!!!!!")
-                        }
-                    });
+                let stream: Id<NSObject> = unsafe {
+                    msg_send_id![
+                        msg_send_id![sc_stream, alloc], initWithFilter:&*filter
+                        configuration:&*stream_config
+                        delegate:&*stream_output_consumer
+                    ]
+                };
+                let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
+                // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
+                // let attr = 0 as dispatch_queue_attr_t;
+                // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
+                // // let queue = SendPtr(dispatch_get_main_queue());
 
-                    let _: () = unsafe {
-                        msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
-                    };
-                    break;
-                }
+                let queue: *const Object = std::ptr::null();
+                let did_setup: bool = unsafe {
+                    msg_send![&stream,
+                              addStreamOutput:&*stream_output_consumer
+                              type:0_i64
+                              sampleHandlerQueue:queue
+                              error:&&*err
+                    ]
+                };
+                dbg!(did_setup);
+
+                let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
+                    if !error.is_null() {
+                        panic!("something went wrong with starting the stream capture")
+                    } else {
+                        println!("Started streaming!!!!!")
+                    }
+                });
+
+                let _: () = unsafe {
+                    msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
+                };
+                break;
             }
         },
     );
 
-    // block
     let sc_shareable = class!(SCShareableContent);
     unsafe {
         let _: () = msg_send![
@@ -270,62 +269,6 @@ fn main() -> Result<(), ()> {
     };
     // give the callback time to execute
     std::thread::sleep(std::time::Duration::from_secs(10));
-
-    // unsafe { msg_send![qq, completionHandler:&block] }
-
-    // block::Block
-
-    // let m = unsafe { msg_send![available_content, excludingDesktopWindows, false,] };
-    // let windows = window::copy_window_info(
-    // window::kCGWindowListOptionAll
-    //         | window::kCGWindowListOptionExcludeDesktopElements
-    //         | window::kCGWindowListOptionOnScreenOnly,
-    //     // window::kCGWindowListOptionAll | window::kCGWindowListOptionOnScreenOnly,
-    //     window::kCGNullWindowID,
-    // )
-    // .ok_or(())?;
-    // dbg!(&windows);
-
-    // let mut count = 1;
-    // // use core_foundation::
-    // for item in windows.iter() {
-    //     let a = unsafe { std::mem::transmute::<_, CFDictionaryRef>(*item) };
-    //     // let meow = **a.get(window::kCGWindowOwnerName);
-    //     let mut value: *const c_void = std::ptr::null();
-    //     // let value = a.get(unsafe { window::kCGWindowOwnerName.to_void() });
-    //     // dbg!(*value);
-
-    //     // let strang = unsafe {
-    //     //     CFStringGetCStringPtr(
-    //     //         *value as CFStringRef,
-    //     //         core_foundation::string::kCFStringEncodingUTF8,
-    //     //     )
-    //     // };
-    //     if unsafe {
-    //         CFDictionaryGetValueIfPresent(a, window::kCGWindowOwnerName.to_void(), &mut value)
-    //     } == 1
-    //     {
-    //         let strang = unsafe {
-    //             CFStringGetCStringPtr(
-    //                 value as CFStringRef,
-    //                 core_foundation::string::kCFStringEncodingUTF8,
-    //             )
-    //         };
-
-    //         if !strang.is_null() {
-    //             dbg!(unsafe { CStr::from_ptr(strang) });
-    //         }
-    //         // dbg!(unsafe { *(value as CFStringRef) });
-    //     };
-    //     // dbg!(unsafe { a.offset(window::kCGWindowOwnerName) });
-    //     // dbg!(*item);
-    //     // let a = unsafe { std::mem::transmute::<_, CFDictionary<CFString, CFTypeRef>>(item) };
-    //     // let m = unsafe { a.get(window::kCGWindowOwnerName) };
-
-    //     // dbg!(unsafe { dbg!(*m) });
-    //     dbg!(count);
-    //     count += 1;
-    // }
 
     Ok(())
 }

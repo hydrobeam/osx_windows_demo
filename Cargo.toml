@@ -11,4 +11,4 @@ core-foundation = "0.9.3"
 core-graphics = "0.23.1"
 dispatch = "0.2.0"
 icrate = { version = "0.0.3", features = ["Foundation", "Foundation_NSArray", "Foundation_NSString"] }
-objc2 = "0.4.0"
+objc2 = { version = "0.4.0", features = ["unstable-static-sel", "unstable-static-class", "unstable-static-sel-inlined", "unstable-static-class-inlined"] }
