@@ -44,6 +44,10 @@ unsafe impl Encode for CMTime {
     );
 }
 
+unsafe impl RefEncode for CMTime {
+    const ENCODING_REF: Encoding = Self::ENCODING;
+}
+
 // unsafe impl Encode for CGRect {
 //     const ENCODING: Encoding =
 //         Encoding::Struct(names::RECT, &[CGPoint::ENCODING, CGSize::ENCODING]);
@@ -204,7 +208,7 @@ fn main() -> Result<(), ()> {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
                         let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
-                        let _: () = msg_send![&*stream_config, setMinimumFrameInterval:time];
+                        let _: () = msg_send![&*stream_config, setMinimumFrameInterval:&time];
                     };
                     // use icrate::Foundation::
 
