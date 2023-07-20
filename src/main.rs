@@ -175,27 +175,17 @@ fn main() -> Result<(), ()> {
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
             if !error.is_null() {
-                panic!("unable to fetch windows, make sure permissions are granted")
+                panic!("unable to fetch windows, make sure permissions are granted");
             }
-
-            // array of SCWindows
             let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
             for display in displays.iter() {
-                // let ns_title: *const NSString = unsafe { msg_send![display, title] };
-                // // not every window has a title
-                // if ns_title.is_null() {
-                //     continue;
-                // }
-                // let utf8title = unsafe { (*ns_title).UTF8String() };
-                // // SAFETY: we are guaranteed a UTF8string
-                // let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
                 {
                     // SCWindow
                     let cg_rect: CGRect = unsafe { msg_send![display, frame] };
                     let h = cg_rect.size.height as u64;
                     let w = cg_rect.size.width as u64;
-                    dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
+
                     let null = NSArray::<Object>::new();
                     let filter: Id<NSObject> = unsafe {
                         msg_send_id![f_obj, initWithDisplay:display
@@ -205,14 +195,11 @@ fn main() -> Result<(), ()> {
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
-                    let time: CMTime = unsafe { CMTimeMake(5, 60) };
                     unsafe {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
                         let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
-                        // let _: () = msg_send![&*stream_config, setMinimumFrameInterval:&time];
                     };
-                    // use icrate::Foundation::
 
                     let stream_output_consumer: Id<StreamEat> =
                         unsafe { msg_send_id![StreamEat::alloc(), init] };
@@ -224,9 +211,7 @@ fn main() -> Result<(), ()> {
                             delegate:&*stream_output_consumer
                         ]
                     };
-                    dbg!(&stream);
-
-                    let err = NSError::new(0, ns_string!("ScreenRecorder.WackyError"));
+                    let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
                     let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                     let attr = 0 as dispatch_queue_attr_t;
                     let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
@@ -251,8 +236,6 @@ fn main() -> Result<(), ()> {
                     let _: () = unsafe {
                         msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
                     };
-
-                    std::thread::sleep(std::time::Duration::from_secs(5));
                     break;
                 }
             }
