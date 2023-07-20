@@ -197,15 +197,15 @@ fn main() -> Result<(), ()> {
             // array of SCWindows
             let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
             for display in displays.iter() {
-                let ns_title: *const NSString = unsafe { msg_send![display, title] };
-                // not every window has a title
-                if ns_title.is_null() {
-                    continue;
-                }
-                let utf8title = unsafe { (*ns_title).UTF8String() };
-                // SAFETY: we are guaranteed a UTF8string
-                let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
-                if title.contains("osx") {
+                // let ns_title: *const NSString = unsafe { msg_send![display, title] };
+                // // not every window has a title
+                // if ns_title.is_null() {
+                //     continue;
+                // }
+                // let utf8title = unsafe { (*ns_title).UTF8String() };
+                // // SAFETY: we are guaranteed a UTF8string
+                // let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
+                {
                     // SCWindow
                     let cg_rect: CGRect = unsafe { msg_send![display, frame] };
                     let h = cg_rect.size.height as u64;
