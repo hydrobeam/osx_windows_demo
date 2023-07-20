@@ -1,4 +1,6 @@
 #![allow(unused_imports)]
+#![allow(non_snake_case)]
+#![allow(non_upper_case_globals)]
 use block2::{Block, ConcreteBlock};
 use core_foundation::base::ToVoid;
 use core_foundation::dictionary::{CFDictionary, CFDictionaryGetValueIfPresent, CFDictionaryRef};
@@ -139,11 +141,11 @@ declare_class!(
     }
 
     unsafe impl SCStreamOutput for StreamEat {
-        #[method(stream)]
+        #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
             &self,
             stream: *const Object,
-            sampleBuffer: &Object,
+            sampleBuffer: *const Object,
             ofType: NSInteger,
         ) {
             dbg!("WHAT OUTPUT");
@@ -151,7 +153,7 @@ declare_class!(
     }
 
     unsafe impl SCStreamDelegate for StreamEat {
-        #[method(stream_delegate)]
+        #[method(stream:didStopWithError:)]
         unsafe fn stream_delegate(
             &self,
             stream: *const Object,
