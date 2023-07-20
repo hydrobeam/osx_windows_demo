@@ -195,9 +195,9 @@ fn main() -> Result<(), ()> {
             }
 
             // array of SCWindows
-            let windows: &NSArray = unsafe { msg_send![shareable_content, windows] };
-            for window in windows.iter() {
-                let ns_title: *const NSString = unsafe { msg_send![window, title] };
+            let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
+            for display in displays.iter() {
+                let ns_title: *const NSString = unsafe { msg_send![display, title] };
                 // not every window has a title
                 if ns_title.is_null() {
                     continue;
@@ -207,13 +207,13 @@ fn main() -> Result<(), ()> {
                 let title = unsafe { CStr::from_ptr(utf8title) }.to_str().unwrap();
                 if title.contains("osx") {
                     // SCWindow
-                    let cg_rect: CGRect = unsafe { msg_send![window, frame] };
+                    let cg_rect: CGRect = unsafe { msg_send![display, frame] };
                     let h = cg_rect.size.height as u64;
                     let w = cg_rect.size.width as u64;
                     dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
                     let filter: Id<NSObject> =
-                        unsafe { msg_send_id![f_obj, initWithDesktopIndependentWindow:window] };
+                        unsafe { msg_send_id![f_obj, initWithDesktopIndependentWindow:display] };
 
                     let stream_config: Id<NSObject> =
                         unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
