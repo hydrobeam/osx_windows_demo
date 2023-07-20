@@ -61,7 +61,7 @@ extern_protocol!(
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         fn stream(
-            &self,
+            this: *const Self,
             the_stream: *const NSObject,
             sample_buffer: *const NSObject,
             output_type: NSInteger,
@@ -74,7 +74,11 @@ extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
-        fn stream_delegate(&self, stream: *const NSObject, did_stop_with_error: *const NSError);
+        fn stream_delegate(
+            this: *const Self,
+            stream: *const NSObject,
+            did_stop_with_error: *const NSError,
+        );
     }
     unsafe impl ProtocolType for dyn SCStreamDelegate {}
 );
@@ -92,7 +96,7 @@ declare_class!(
     unsafe impl SCStreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
-            &self,
+            this: *const Self,
             _stream: *const Object,
             _sampleBuffer: *const Object,
             _ofType: NSInteger,
@@ -104,15 +108,16 @@ declare_class!(
     unsafe impl SCStreamDelegate for StreamEat {
         #[method(stream:didStopWithError:)]
         unsafe fn stream_delegate(
-            &self,
+            this: *const Self,
             _stream: *const Object,
             _did_stop_with_error: *const NSError,
         ) {
             dbg!("DELEGATE");
         }
     }
+
+    unsafe impl NSObjectProtocol for StreamEat {}
 );
-unsafe impl NSObjectProtocol for StreamEat {}
 
 #[derive(Debug)]
 struct SendPtr<T>(*const T);
@@ -143,7 +148,6 @@ fn main() -> Result<(), ()> {
                 panic!("unable to fetch windows, make sure permissions are granted");
             }
             let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
-            dbg!(displays.len());
 
             if let Some(display) = displays.iter().next() {
                 let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
