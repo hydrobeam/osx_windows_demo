@@ -52,7 +52,7 @@ extern_class!(
     pub struct SCShareableContent;
     unsafe impl ClassType for SCShareableContent {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
+        type Mutability = mutability::Mutable;
     }
 );
 
@@ -61,7 +61,7 @@ extern_protocol!(
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         fn stream(
-            this: *const Self,
+            this: *mut Self,
             the_stream: *const NSObject,
             sample_buffer: *const NSObject,
             output_type: NSInteger,
@@ -75,7 +75,7 @@ extern_protocol!(
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
         fn stream_delegate(
-            this: *const Self,
+            this: *mut Self,
             stream: *const NSObject,
             did_stop_with_error: *const NSError,
         );
@@ -96,7 +96,7 @@ declare_class!(
     unsafe impl SCStreamOutput for StreamEat {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
-            this: *const Self,
+            this: *mut Self,
             _stream: *const Object,
             _sampleBuffer: *const Object,
             _ofType: NSInteger,
@@ -108,7 +108,7 @@ declare_class!(
     unsafe impl SCStreamDelegate for StreamEat {
         #[method(stream:didStopWithError:)]
         unsafe fn stream_delegate(
-            this: *const Self,
+            this: *mut Self,
             _stream: *const Object,
             _did_stop_with_error: *const NSError,
         ) {
