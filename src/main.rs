@@ -208,7 +208,7 @@ fn main() -> Result<(), ()> {
                         let _: () = msg_send![&*stream_config, setWidth:w];
                         let _: () = msg_send![&*stream_config, setHeight:h];
                         let _: () = msg_send![&*stream_config, setQueueDepth:6_i64];
-                        let _: () = msg_send![&*stream_config, setMinimumFrameInterval:&time];
+                        // let _: () = msg_send![&*stream_config, setMinimumFrameInterval:&time];
                     };
                     // use icrate::Foundation::
 
