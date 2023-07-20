@@ -126,7 +126,7 @@ declare_class!(
     }
 
     unsafe impl SCStreamOutput for StreamEat {
-        #[method(stream:didOutputSampleBuffer:ofType:)]
+        #[method(csity:didOutputSampleBuffer:ofType:)]
         unsafe fn stream(
             the_stream: *const Object,
             sample_buffer: *const Object,
@@ -142,7 +142,7 @@ unsafe impl NSObjectProtocol for StreamEat {}
 extern_protocol!(
     /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
-        #[method(stream:didStopWithError:)]
+        #[method(csity:didStopWithError:)]
         fn stream(stream: *const Object, did_stop_with_error: *const NSError) -> ();
     }
     unsafe impl ProtocolType for dyn SCStreamDelegate {}
@@ -212,7 +212,6 @@ fn main() -> Result<(), ()> {
                     let w = cg_rect.size.width as u64;
                     dbg!(h, w);
                     let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
-                    let null: *const std::ffi::c_void = std::ptr::null();
                     let null = NSArray::<Object>::new();
                     let filter: Id<NSObject> = unsafe {
                         msg_send_id![f_obj, initWithDisplay:display
