@@ -173,7 +173,7 @@ fn main() -> Result<(), ()> {
                 let null_obj: *const Object = std::ptr::null();
 
                 let _: () = unsafe {
-                    msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
+                    msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i32]
                 };
 
                 let stream: Id<NSObject> = unsafe {
