@@ -170,9 +170,10 @@ fn main() -> Result<(), ()> {
 
                 let stream_output_consumer: Id<StreamEat> =
                     unsafe { msg_send_id![StreamEat::alloc(), init] };
-                let null_obj: *const Object = std::ptr::null();
 
-                // this triggers the message
+                // this successfully triggers the message
+
+                // let null_obj: *const Object = std::ptr::null();
                 // let _: () = unsafe {
                 //     msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
                 // };
@@ -185,8 +186,10 @@ fn main() -> Result<(), ()> {
                     ]
                 };
                 let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
-                // let a = std::ptr::null() as *const *const Object;
 
+                // queue shenanigans
+
+                // let a = std::ptr::null() as *const *const Object;
                 // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                 // let attr = 0 as dispatch_queue_attr_t;
                 // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
