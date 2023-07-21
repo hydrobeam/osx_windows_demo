@@ -172,9 +172,10 @@ fn main() -> Result<(), ()> {
                     unsafe { msg_send_id![StreamEat::alloc(), init] };
                 let null_obj: *const Object = std::ptr::null();
 
-                let _: () = unsafe {
-                    msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i32]
-                };
+                // this triggers the message
+                // let _: () = unsafe {
+                //     msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
+                // };
 
                 let stream: Id<NSObject> = unsafe {
                     msg_send_id![
