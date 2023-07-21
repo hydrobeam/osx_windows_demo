@@ -7,8 +7,6 @@ edition = "2021"
 
 [dependencies]
 block2 = "0.2.0"
-core-foundation = "0.9.3"
-core-graphics = "0.23.1"
 dispatch = "0.2.0"
 icrate = { version = "0.0.3", features = ["Foundation", "Foundation_NSArray", "Foundation_NSString"] }
 objc2 = { version = "0.4.0"}
