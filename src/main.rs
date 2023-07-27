@@ -65,6 +65,7 @@ declare_class!(
             dbg!("DELEGATE");
         }
     }
+
     unsafe impl NSObjectProtocol for StreamEat {}
 );
 
