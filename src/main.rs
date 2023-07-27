@@ -51,8 +51,7 @@ declare_class!(
             _sampleBuffer: *mut Object,
             _ofType: NSInteger,
         ) {
-            panic!("??");
-            // dbg!("OUTPUT");
+            dbg!("OUTPUT");
         }
     }
 
