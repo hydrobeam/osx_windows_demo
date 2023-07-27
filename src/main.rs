@@ -143,6 +143,7 @@ fn main() -> Result<(), ()> {
     let sc_stream = class!(SCStream);
     dbg!(runtime::Protocol::get("SCStreamDelegate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
+    dbg!(runtime::Class::get("SCStream"));
     // unsafe { dbg!(stream_output()) };
     unsafe {
         stream_delegate();
