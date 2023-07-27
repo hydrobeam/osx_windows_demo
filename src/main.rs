@@ -72,7 +72,7 @@ extern_protocol!(
 extern_protocol!(
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
-        fn stream_delegate(&self, stream: *const NSObject, did_stop_with_error: *const NSError);
+        fn stream_delegate(&self, stream: *const Object, did_stop_with_error: *const NSError);
     }
     unsafe impl ProtocolType for dyn SCStreamDelegate {}
 );
