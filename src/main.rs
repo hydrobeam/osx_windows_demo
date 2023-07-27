@@ -62,7 +62,7 @@ extern_protocol!(
         fn stream(
             &self,
             the_stream: *const Object,
-            sample_buffer: *const Object,
+            sample_buffer: &Object,
             output_type: NSInteger,
         );
     }
@@ -92,7 +92,7 @@ declare_class!(
         unsafe fn stream(
             &self,
             _stream: *const Object,
-            _sampleBuffer: *const Object,
+            _sampleBuffer: &Object,
             _ofType: NSInteger,
         ) {
             panic!("??");
