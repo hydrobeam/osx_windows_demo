@@ -6,7 +6,7 @@ use icrate::{
     Foundation::{NSArray, NSError, NSInteger, NSObject, NSObjectProtocol},
 };
 
-use objc2::rc::Id;
+use objc2::{rc::Id, runtime};
 use objc2::{
     class, declare_class, extern_class, extern_protocol, msg_send, msg_send_id, mutability,
     runtime::Object, ClassType, Encode, Encoding, ProtocolType, RefEncode,
@@ -57,7 +57,6 @@ extern_class!(
 );
 
 extern_protocol!(
-    /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
         fn stream(
@@ -71,7 +70,6 @@ extern_protocol!(
 );
 
 extern_protocol!(
-    /// This comment will appear on the trait as expected.
     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
         #[method(stream:didStopWithError:)]
         fn stream_delegate(&self, stream: *const NSObject, did_stop_with_error: *const NSError);
@@ -137,6 +135,8 @@ fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
     let sc_stream_configuration = class!(SCStreamConfiguration);
     let sc_stream = class!(SCStream);
+    dbg!(runtime::Protocol::get("SCStreamDelegate"));
+    dbg!(runtime::Protocol::get("SCStreamOutput"));
     // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
