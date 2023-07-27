@@ -104,8 +104,6 @@ fn main() -> Result<(), ()> {
     let sc_stream = class!(SCStream);
     dbg!(runtime::Protocol::get("SCStreamDelegate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
-    dbg!(runtime::Class::get("SCStream"));
-    // unsafe { dbg!(stream_output()) };
     unsafe {
         dbg!(stream_delegate(), stream_output());
     }
@@ -135,10 +133,10 @@ fn main() -> Result<(), ()> {
                 dbg!(&stream_output_consumer);
                 // this successfully triggers the message
 
-                // let null_obj: *const Object = std::ptr::null();
-                // let _: () = unsafe {
-                //     msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
-                // };
+                let null_obj: *const Object = std::ptr::null();
+                let _: () = unsafe {
+                    msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
+                };
 
                 let stream: Id<NSObject> = unsafe {
                     msg_send_id![
