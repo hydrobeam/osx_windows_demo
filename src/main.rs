@@ -6,11 +6,11 @@ use icrate::{
     Foundation::{NSArray, NSError, NSInteger, NSObject, NSObjectProtocol},
 };
 
-use objc2::{rc::Id, runtime};
 use objc2::{
     class, declare_class, extern_class, extern_protocol, msg_send, msg_send_id, mutability,
     runtime::Object, ClassType, Encode, Encoding, ProtocolType, RefEncode,
 };
+use objc2::{rc::Id, runtime};
 
 pub type CMTimeValue = i64;
 pub type CMTimeScale = i32;
@@ -131,12 +131,18 @@ extern "C" {
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
+extern "C" {
+    fn stream_output() -> *const Object;
+    fn stream_delegate() -> *const Object;
+}
+
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
     let sc_stream_configuration = class!(SCStreamConfiguration);
     let sc_stream = class!(SCStream);
     dbg!(runtime::Protocol::get("SCStreamDelegate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
+    unsafe { dbg!(stream_output()) };
     // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
