@@ -22,6 +22,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cc"
+version = "1.0.79"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50d30906286121d95be3d479533b458f87493b30a4b5f79a607db8f5d11aa91f"
+
+[[package]]
 name = "dispatch"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -64,6 +70,7 @@ name = "windows_list_osx"
 version = "0.1.0"
 dependencies = [
  "block2",
+ "cc",
  "dispatch",
  "icrate",
  "objc2",
