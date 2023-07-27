@@ -181,6 +181,7 @@ fn main() -> Result<(), ()> {
                 let stream_output_consumer: Id<StreamEat> =
                     unsafe { msg_send_id![StreamEat::alloc(), init] };
 
+                dbg!(&stream_output_consumer);
                 // this successfully triggers the message
 
                 // let null_obj: *const Object = std::ptr::null();
