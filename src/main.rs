@@ -131,10 +131,10 @@ extern "C" {
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
-extern "C" {
-    fn stream_output() -> *const Object;
-    fn stream_delegate() -> *const Object;
-}
+// extern "C" {
+//     fn stream_output() -> *const Object;
+//     fn stream_delegate() -> *const Object;
+// }
 
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
@@ -142,7 +142,8 @@ fn main() -> Result<(), ()> {
     let sc_stream = class!(SCStream);
     dbg!(runtime::Protocol::get("SCStreamDelegate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
-    unsafe { dbg!(stream_output()) };
+    // unsafe { dbg!(stream_output()) };
+    // unsafe { stream_delegate(); }
     // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
