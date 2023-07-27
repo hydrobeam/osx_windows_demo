@@ -12,15 +12,6 @@ use objc2::{
 };
 use objc2::{rc::Id, runtime};
 
-extern_class!(
-    #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
-    pub struct SCShareableContent;
-    unsafe impl ClassType for SCShareableContent {
-        type Super = NSObject;
-        type Mutability = mutability::Mutable;
-    }
-);
-
 extern_protocol!(
     pub unsafe trait SCStreamOutput: NSObjectProtocol {
         #[method(stream:didOutputSampleBuffer:ofType:)]
@@ -108,78 +99,76 @@ fn main() -> Result<(), ()> {
         dbg!(stream_delegate(), stream_output());
     }
     // this is handled after the next call, see end of main
-    let block = ConcreteBlock::new(
-        |shareable_content: *const SCShareableContent, error: *const NSError| {
-            if !error.is_null() {
-                panic!("unable to fetch windows, make sure permissions are granted");
-            }
-            let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
+    let block = ConcreteBlock::new(|shareable_content: *const Object, error: *const NSError| {
+        if !error.is_null() {
+            panic!("unable to fetch windows, make sure permissions are granted");
+        }
+        let displays: &NSArray = unsafe { msg_send![shareable_content, displays] };
 
-            if let Some(display) = displays.iter().next() {
-                let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
+        if let Some(display) = displays.iter().next() {
+            let f_obj = unsafe { msg_send_id![sc_content_filter, alloc] };
 
-                let null = NSArray::<Object>::new();
-                let filter: Id<NSObject> = unsafe {
-                    msg_send_id![f_obj, initWithDisplay:display
+            let null = NSArray::<Object>::new();
+            let filter: Id<NSObject> = unsafe {
+                msg_send_id![f_obj, initWithDisplay:display
                         excludingWindows:&*null]
-                };
+            };
 
-                let stream_config: Id<NSObject> =
-                    unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
+            let stream_config: Id<NSObject> =
+                unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
 
-                let stream_output_consumer: Id<StreamEat> =
-                    unsafe { msg_send_id![StreamEat::alloc(), init] };
+            let stream_output_consumer: Id<StreamEat> =
+                unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-                dbg!(&stream_output_consumer);
-                // this successfully triggers the message
+            dbg!(&stream_output_consumer);
+            // this successfully triggers the message
 
-                let null_obj: *const Object = std::ptr::null();
-                let _: () = unsafe {
-                    msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
-                };
+            let null_obj: *const Object = std::ptr::null();
+            let _: () = unsafe {
+                msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
+            };
 
-                let stream: Id<NSObject> = unsafe {
-                    msg_send_id![
-                        msg_send_id![sc_stream, alloc], initWithFilter:&*filter
-                        configuration:&*stream_config
-                        delegate:&*stream_output_consumer
-                    ]
-                };
-                let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
+            let stream: Id<NSObject> = unsafe {
+                msg_send_id![
+                    msg_send_id![sc_stream, alloc], initWithFilter:&*filter
+                    configuration:&*stream_config
+                    delegate:&*stream_output_consumer
+                ]
+            };
+            let err = NSError::new(44, ns_string!("ScreenRecorder.WackyError"));
 
-                // queue shenanigans
+            // queue shenanigans
 
-                // let a = std::ptr::null() as *const *const Object;
-                // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
-                // let attr = 0 as dispatch_queue_attr_t;
-                // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
-                let queue = SendPtr(dispatch::ffi::dispatch_get_main_queue());
+            // let a = std::ptr::null() as *const *const Object;
+            // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
+            // let attr = 0 as dispatch_queue_attr_t;
+            // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
+            let queue = SendPtr(dispatch::ffi::dispatch_get_main_queue());
 
-                // let queue: *const Object = std::ptr::null();
-                let did_setup: bool = unsafe {
-                    msg_send![&stream,
-                              addStreamOutput:&*stream_output_consumer
-                              type:0_i64
-                              sampleHandlerQueue:queue
-                              error:&&*err
-                    ]
-                };
-                dbg!(did_setup);
+            // let queue: *const Object = std::ptr::null();
+            let did_setup: bool = unsafe {
+                msg_send![&stream,
+                          addStreamOutput:&*stream_output_consumer
+                          type:0_i64
+                          sampleHandlerQueue:queue
+                          error:&&*err
+                ]
+            };
+            dbg!(did_setup);
 
-                let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
-                    if !error.is_null() {
-                        panic!("something went wrong with starting the stream capture")
-                    } else {
-                        println!("Started streaming!!!!!")
-                    }
-                });
+            let basic_completion_handler = ConcreteBlock::new(|error: *const NSError| {
+                if !error.is_null() {
+                    panic!("something went wrong with starting the stream capture")
+                } else {
+                    println!("Started streaming!!!!!")
+                }
+            });
 
-                let _: () = unsafe {
-                    msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
-                };
-            }
-        },
-    );
+            let _: () = unsafe {
+                msg_send![&stream, startCaptureWithCompletionHandler:&basic_completion_handler]
+            };
+        }
+    });
 
     let sc_shareable = class!(SCShareableContent);
     unsafe {
