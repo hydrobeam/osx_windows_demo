@@ -7,5 +7,5 @@ fn main() {
     //     builder.flag(flag);
     // }
 
-    builder.compile("comp/outer.a");
+    builder.compile("outer.a");
 }
