@@ -56,26 +56,26 @@ extern_class!(
     }
 );
 
-// extern_protocol!(
-//     pub unsafe trait SCStreamOutput: NSObjectProtocol {
-//         #[method(stream:didOutputSampleBuffer:ofType:)]
-//         fn stream(
-//             &self,
-//             the_stream: *const NSObject,
-//             sample_buffer: *const NSObject,
-//             output_type: NSInteger,
-//         );
-//     }
-//     unsafe impl ProtocolType for dyn SCStreamOutput {}
-// );
+extern_protocol!(
+    pub unsafe trait SCStreamOutput: NSObjectProtocol {
+        #[method(stream:didOutputSampleBuffer:ofType:)]
+        fn stream(
+            &self,
+            the_stream: *const Object,
+            sample_buffer: *const Object,
+            output_type: NSInteger,
+        );
+    }
+    unsafe impl ProtocolType for dyn SCStreamOutput {}
+);
 
-// extern_protocol!(
-//     pub unsafe trait SCStreamDelegate: NSObjectProtocol {
-//         #[method(stream:didStopWithError:)]
-//         fn stream_delegate(&self, stream: *const NSObject, did_stop_with_error: *const NSError);
-//     }
-//     unsafe impl ProtocolType for dyn SCStreamDelegate {}
-// );
+extern_protocol!(
+    pub unsafe trait SCStreamDelegate: NSObjectProtocol {
+        #[method(stream:didStopWithError:)]
+        fn stream_delegate(&self, stream: *const NSObject, did_stop_with_error: *const NSError);
+    }
+    unsafe impl ProtocolType for dyn SCStreamDelegate {}
+);
 
 declare_class!(
     #[derive(Debug)]
