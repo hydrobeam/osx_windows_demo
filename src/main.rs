@@ -95,7 +95,7 @@ declare_class!(
             _sampleBuffer: *const Object,
             _ofType: NSInteger,
         ) {
-            std::intrinsics::abort();
+            panic!("??");
             // dbg!("OUTPUT");
         }
     }
