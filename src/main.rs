@@ -143,7 +143,7 @@ fn main() -> Result<(), ()> {
     dbg!(runtime::Protocol::get("SCStreamDelegate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
     // unsafe { dbg!(stream_output()) };
-    // unsafe { stream_delegate(); }
+  unsafe  { stream_delegate(); }
     // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
