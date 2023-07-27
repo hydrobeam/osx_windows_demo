@@ -39,7 +39,7 @@ declare_class!(
 
     unsafe impl ClassType for StreamEat {
         type Super = NSObject;
-        type Mutability = mutability::Immutable;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "osx_StreamEat";
     }
 
@@ -119,13 +119,12 @@ fn main() -> Result<(), ()> {
             let stream_output_consumer: Id<StreamEat> =
                 unsafe { msg_send_id![StreamEat::alloc(), init] };
 
-            dbg!(&stream_output_consumer);
             // this successfully triggers the message
 
-            let null_obj: *const Object = std::ptr::null();
-            let _: () = unsafe {
-                msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
-            };
+            // let null_obj: *const Object = std::ptr::null();
+            // let _: () = unsafe {
+            //     msg_send![&*stream_output_consumer, stream:null_obj didOutputSampleBuffer:null_obj ofType:1_i64]
+            // };
 
             let stream: Id<NSObject> = unsafe {
                 msg_send_id![
