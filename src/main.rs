@@ -44,15 +44,15 @@ declare_class!(
     }
 
     unsafe impl SCStreamOutput for StreamEat {
-        // #[method(stream:didOutputSampleBuffer:ofType:)]
-        // unsafe fn stream(
-        //     &self,
-        //     _stream: *const Object,
-        //     _sampleBuffer: *mut Object,
-        //     _ofType: NSInteger,
-        // ) {
-        //     dbg!("OUTPUT");
-        // }
+        #[method(stream:didOutputSampleBuffer:ofType:)]
+        unsafe fn stream(
+            &self,
+            _stream: *const Object,
+            _sampleBuffer: *mut Object,
+            _ofType: NSInteger,
+        ) {
+            dbg!("OUTPUT");
+        }
     }
 
     unsafe impl SCStreamDelegate for StreamEat {
