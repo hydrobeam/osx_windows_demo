@@ -9,7 +9,7 @@ edition = "2021"
 block2 = "0.2.0"
 dispatch = "0.2.0"
 icrate = { version = "0.0.3", features = ["Foundation", "Foundation_NSArray", "Foundation_NSString"] }
-objc2 = { version = "0.4.0", features = ["unstable-static-sel", "unstable-static-class", "unstable-static-sel-inlined", "unstable-static-class-inlined", "verify"] }
+objc2 = { version = "0.4.0", features = ["unstable-static-sel", "unstable-static-class", "unstable-static-sel-inlined", "unstable-static-class-inlined"] }
 
 [build-dependencies]
 cc = "1.0.79"

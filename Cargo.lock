@@ -44,21 +44,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "libc"
-version = "0.2.147"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
-
-[[package]]
-name = "malloc_buf"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f32c8c0575eee8637bf462087c00098fe16d6cb621f1abb6ebab4da414d57fd"
-dependencies = [
- "libc",
-]
-
-[[package]]
 name = "objc-sys"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -70,7 +55,6 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3cf6c364d54fa7b8be594c17b1506d5fe332038d3f6ef7b4ce36a5788798634c"
 dependencies = [
- "malloc_buf",
  "objc-sys",
  "objc2-encode",
  "objc2-proc-macros",
