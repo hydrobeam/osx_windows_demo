@@ -65,9 +65,9 @@ declare_class!(
             dbg!("DELEGATE");
         }
     }
-
-    unsafe impl NSObjectProtocol for StreamEat {}
 );
+
+unsafe impl NSObjectProtocol for StreamEat {}
 
 #[derive(Debug)]
 struct SendPtr<T>(*const T);
