@@ -131,10 +131,10 @@ extern "C" {
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
-// extern "C" {
-//     fn stream_output() -> *const Object;
-//     fn stream_delegate() -> *const Object;
-// }
+extern "C" {
+    fn stream_output() -> *const Object;
+    fn stream_delegate() -> *const Object;
+}
 
 fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
