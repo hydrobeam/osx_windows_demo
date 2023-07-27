@@ -12,41 +12,6 @@ use objc2::{
 };
 use objc2::{rc::Id, runtime};
 
-pub type CMTimeValue = i64;
-pub type CMTimeScale = i32;
-pub type CMTimeEpoch = i64;
-pub const CMTimeFlags_kCMTimeFlags_Valid: CMTimeFlags = 1;
-pub const CMTimeFlags_kCMTimeFlags_HasBeenRounded: CMTimeFlags = 2;
-pub const CMTimeFlags_kCMTimeFlags_PositiveInfinity: CMTimeFlags = 4;
-pub const CMTimeFlags_kCMTimeFlags_NegativeInfinity: CMTimeFlags = 8;
-pub const CMTimeFlags_kCMTimeFlags_Indefinite: CMTimeFlags = 16;
-pub const CMTimeFlags_kCMTimeFlags_ImpliedValueFlagsMask: CMTimeFlags = 28;
-pub type CMTimeFlags = u32;
-#[repr(C, packed(4))]
-#[derive(Debug, Copy, Clone)]
-pub struct CMTime {
-    pub value: CMTimeValue,
-    pub timescale: CMTimeScale,
-    pub flags: CMTimeFlags,
-    pub epoch: CMTimeEpoch,
-}
-
-unsafe impl Encode for CMTime {
-    const ENCODING: Encoding = Encoding::Struct(
-        "CMTime",
-        &[
-            Encoding::LongLong,
-            Encoding::Int,
-            Encoding::LongLong,
-            Encoding::UInt,
-        ],
-    );
-}
-
-unsafe impl RefEncode for CMTime {
-    const ENCODING_REF: Encoding = Self::ENCODING;
-}
-
 extern_class!(
     #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation
     pub struct SCShareableContent;
@@ -125,10 +90,6 @@ unsafe impl<T> Encode for SendPtr<T> {
 extern "C" {}
 #[link(name = "CoreGraphics", kind = "framework")]
 extern "C" {}
-#[link(name = "CoreMedia", kind = "framework")]
-extern "C" {
-    pub fn CMTimeMake(value: i64, timescale: i32) -> CMTime;
-}
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
@@ -146,7 +107,7 @@ fn main() -> Result<(), ()> {
     dbg!(runtime::Class::get("SCStream"));
     // unsafe { dbg!(stream_output()) };
     unsafe {
-        stream_delegate();
+        dbg!(stream_delegate(), stream_output());
     }
     // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
@@ -167,17 +128,6 @@ fn main() -> Result<(), ()> {
 
                 let stream_config: Id<NSObject> =
                     unsafe { msg_send_id![msg_send_id![sc_stream_configuration, alloc], init] };
-
-                // config
-
-                // unsafe {
-                //     let cg_rect: CGRect = unsafe { msg_send![display, frame] };
-                //     let h = cg_rect.size.height as u64;
-                //     let w = cg_rect.size.width as u64;
-                //     let _: () = msg_send![&*stream_config, setWidth:w];
-                //     let _: () = msg_send![&*stream_config, setHeight:h];
-                //     let _: () = msg_send![&*stream_config, setQueueDepth:2_i64];
-                // };
 
                 let stream_output_consumer: Id<StreamEat> =
                     unsafe { msg_send_id![StreamEat::alloc(), init] };
