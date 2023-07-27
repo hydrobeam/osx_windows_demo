@@ -141,7 +141,7 @@ fn main() -> Result<(), ()> {
     let sc_content_filter = class!(SCContentFilter);
     let sc_stream_configuration = class!(SCStreamConfiguration);
     let sc_stream = class!(SCStream);
-    dbg!(runtime::Protocol::get("SCStreamDelegate"));
+    dbg!(runtime::Protocol::get("SCStreamDelgate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
     // unsafe { dbg!(stream_output()) };
     unsafe {
