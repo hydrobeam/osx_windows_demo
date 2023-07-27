@@ -144,7 +144,9 @@ fn main() -> Result<(), ()> {
     dbg!(runtime::Protocol::get("SCStreamDelegate"));
     dbg!(runtime::Protocol::get("SCStreamOutput"));
     // unsafe { dbg!(stream_output()) };
-  unsafe  { stream_delegate(); }
+    unsafe {
+        stream_delegate();
+    }
     // this is handled after the next call, see end of main
     let block = ConcreteBlock::new(
         |shareable_content: *const SCShareableContent, error: *const NSError| {
@@ -201,7 +203,7 @@ fn main() -> Result<(), ()> {
                 // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                 // let attr = 0 as dispatch_queue_attr_t;
                 // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
-                let queue = SendPtr(dispatch_get_main_queue());
+                let queue = SendPtr(dispatch::ffi::dispatch_get_main_queue());
 
                 // let queue: *const Object = std::ptr::null();
                 let did_setup: bool = unsafe {
