@@ -201,9 +201,9 @@ fn main() -> Result<(), ()> {
                 // let label = CString::new("ScreenRecorder.VideoSampleBufferQueue").unwrap();
                 // let attr = 0 as dispatch_queue_attr_t;
                 // let queue = SendPtr(unsafe { dispatch_queue_create(label.as_ptr(), attr) });
-                // // let queue = SendPtr(dispatch_get_main_queue());
+                let queue = SendPtr(dispatch_get_main_queue());
 
-                let queue: *const Object = std::ptr::null();
+                // let queue: *const Object = std::ptr::null();
                 let did_setup: bool = unsafe {
                     msg_send![&stream,
                               addStreamOutput:&*stream_output_consumer
